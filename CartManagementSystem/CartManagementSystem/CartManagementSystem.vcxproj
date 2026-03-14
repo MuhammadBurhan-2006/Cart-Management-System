@@ -21,6 +21,10 @@
   <ItemGroup>
     <ClCompile Include="Member1.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Admin.h" />
+    <ClInclude Include="Customer.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <ProjectGuid>{1687C0FE-2175-8764-02A3-472EA0D04116}</ProjectGuid>

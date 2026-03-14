@@ -1,0 +1,40 @@
+# ---- Visual Studio (C/C++) ----
+.vs/
+*.VC.db
+*.VC.opendb
+*.opendb
+*.sdf
+*.cachefile
+
+# Build output
+Debug/
+Release/
+x64/
+x86/
+ipch/
+*.obj
+*.pch
+*.pdb
+*.ilk
+*.idb
+*.log
+*.tlog
+*.lastbuildstate
+*.exe
+*.dll
+*.lib
+*.exp
+
+# CMake (agar use ho)
+CMakeFiles/
+CMakeCache.txt
+cmake-build-*/
+
+# User-specific
+*.user
+*.suo
+
+# Crash / temp
+*.tmp
+*.temp
+``

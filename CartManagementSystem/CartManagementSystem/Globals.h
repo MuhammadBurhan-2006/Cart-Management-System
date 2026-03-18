@@ -61,5 +61,6 @@ const string ROLE_ADMIN = "ADMIN";
 const string ROLE_CUSTOMER = "CUSTOMER";
 const string DEFAULT_ADMIN_USER = "admin";
 const string DEFAULT_ADMIN_PASS = "admin123";
-
+//Currency symbol used by Abdul Rehman, Khubaib and Areeba for all price displays
+const string CURRENCY_SYMBOL = "Rs.;
 #endif

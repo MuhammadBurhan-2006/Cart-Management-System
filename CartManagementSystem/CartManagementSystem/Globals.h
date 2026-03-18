@@ -51,4 +51,8 @@ const string RECEIPT_FOOTER = "==== Thank you for shopping with us! ===";
 const string RECEIPT_DIVIDER = "-----------------------------------------";
 const string RECEIPT_ID_PREFIX = "RCP-";
 const int RECEIPT_LINE_WIDTH = 42;
+//Report formatting constants used by Khubaib
+const string REPORT_HEADER = "======= ADMIN SALES REPORT =======";
+const string REPORT_DIVIDER = "---------------------------------";
+const string REPORT_ID_PREFIX = "RPT-";
 #endif

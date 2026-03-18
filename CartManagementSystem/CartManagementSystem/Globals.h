@@ -45,4 +45,10 @@ const int STOCK_CRITICAL_THRESHOLD = 5;
 //Refund policy constants used by Abdul Rehman
 const double REFUND_RESTOCKING_FEE = 0.05;
 const int REFUND_MAX_DAYS = 7;
+//Receipt formatting constants used by Abdul Rehman
+const string RECEIPT_HEADER = "===== SUPERMARKET BILLING SYSTEM =====";
+const string RECEIPT_FOOTER = "==== Thank you for shopping with us! ===";
+const string RECEIPT_DIVIDER = "-----------------------------------------";
+const string RECEIPT_ID_PREFIX = "RCP-";
+const int RECEIPT_LINE_WIDTH = 42;
 #endif

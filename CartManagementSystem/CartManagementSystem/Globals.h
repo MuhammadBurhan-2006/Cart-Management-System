@@ -42,4 +42,7 @@ const double COUPON_3_DISC = 0.20;
 //Stock thresholds for low stock alerts used by Khubaib
 const int STOCK_LOW_THRESHOLD = 10;
 const int STOCK_CRITICAL_THRESHOLD = 5;
+//Refund policy constants used by Abdul Rehman
+const double REFUND_RESTOCKING_FEE = 0.05;
+const int REFUND_MAX_DAYS = 7;
 #endif

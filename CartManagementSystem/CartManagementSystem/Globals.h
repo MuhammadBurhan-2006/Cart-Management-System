@@ -32,5 +32,11 @@ const double TAX_GROCERY = 0.00;
 const double DISC_PERISHABLE = 0.10;
 const double DISC_ELECTRONIC = 0.05;
 const double DISC_GROCERY = 0.08;
-
+//Coupon codes declaration used by Areeba
+const string COUPON_1_CODE = "SAVE10";
+const double COUPON_1_DISC = 0.10;
+const string COUPON_2_CODE = "FLAT50";
+const double COUPON_2_DISC = 50.00;
+const string COUPON_3_CODE = "FRESH20";
+const double COUPON_3_DISC = 0.20;
 #endif

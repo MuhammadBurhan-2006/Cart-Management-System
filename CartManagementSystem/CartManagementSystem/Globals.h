@@ -39,4 +39,7 @@ const string COUPON_2_CODE = "FLAT50";
 const double COUPON_2_DISC = 50.00;
 const string COUPON_3_CODE = "FRESH20";
 const double COUPON_3_DISC = 0.20;
+//Stock thresholds for low stock alerts used by Khubaib
+const int STOCK_LOW_THRESHOLD = 10;
+const int STOCK_CRITICAL_THRESHOLD = 5;
 #endif

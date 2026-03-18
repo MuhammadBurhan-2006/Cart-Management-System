@@ -24,4 +24,8 @@ const int MAX_ID_LENGTH = 20;
 const string CAT_PERISHABLE = "Perishable";
 const string CAT_ELECTRONIC = "Electronic";
 const string CAT_GROCERY = "Grocery";
+//Tax rates declaration used by Burhan if any rate changes we can easily update here
+const double TAX_PERISHABLE = 0.05;
+const double TAX_ELECTRONIC = 0.17;
+const double TAX_GROCERY = 0.00;
 #endif

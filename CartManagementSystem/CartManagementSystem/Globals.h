@@ -20,4 +20,8 @@ const int MAX_REFUND_ITEMS = 50;
 const int MAX_ADMINS = 10;
 const int MAX_NAME_LENGTH = 50;
 const int MAX_ID_LENGTH = 20;
+//Globals for product categories mainly used by Burhan and Areeba
+const string CAT_PERISHABLE = "Perishable";
+const string CAT_ELECTRONIC = "Electronic";
+const string CAT_GROCERY = "Grocery";
 #endif

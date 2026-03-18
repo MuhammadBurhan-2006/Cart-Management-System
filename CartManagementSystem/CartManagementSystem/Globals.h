@@ -62,5 +62,14 @@ const string ROLE_CUSTOMER = "CUSTOMER";
 const string DEFAULT_ADMIN_USER = "admin";
 const string DEFAULT_ADMIN_PASS = "admin123";
 //Currency symbol used by Abdul Rehman, Khubaib and Areeba for all price displays
-const string CURRENCY_SYMBOL = "Rs.;
+const string CURRENCY_SYMBOL = "Rs.";
+//GUI labels for all
+const string LABEL_LOGIN_TITLE = "Welcome to Supermarket Billing System";
+const string LABEL_BTN_ADMIN = "Login as Admin";
+const string LABEL_BTN_CUSTOMER = "Login as Customer";
+const string LABEL_BTN_LOGOUT = "Logout";
+const string LABEL_BTN_BACK = "Back";
+const string LABEL_BTN_CHECKOUT = "Checkout & Pay";
+const string LABEL_BTN_ADD_CART = "Add to Cart";
+const string LABEL_BTN_EXPORT = "Export Report";
 #endif

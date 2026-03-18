@@ -55,4 +55,11 @@ const int RECEIPT_LINE_WIDTH = 42;
 const string REPORT_HEADER = "======= ADMIN SALES REPORT =======";
 const string REPORT_DIVIDER = "---------------------------------";
 const string REPORT_ID_PREFIX = "RPT-";
+/*Login roles used by Burhan for Login Screen, by Khubaib for Admin 
+Dashboard and by Areeba for Customer Dashboard*/
+const string ROLE_ADMIN = "ADMIN";
+const string ROLE_CUSTOMER = "CUSTOMER";
+const string DEFAULT_ADMIN_USER = "admin";
+const string DEFAULT_ADMIN_PASS = "admin123";
+
 #endif

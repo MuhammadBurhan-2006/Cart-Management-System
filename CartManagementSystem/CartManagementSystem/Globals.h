@@ -10,4 +10,14 @@ const string FILE_SALES_LOG = "data/sales_log.txt";
 const string FILE_RECEIPTS_DIR = "data/receipts/";
 const string FILE_REPORTS_DIR = "data/reports/";
 const string FILE_REFUNDS_LOG = "data/refunds.txt";
+//Array size limits for the system
+const int MAX_PRODUCTS = 100;
+const int MAX_CUSTOMERS = 200;
+const int MAX_CART_ITEMS = 50;
+const int MAX_RECEIPT_ITEMS = 50;
+const int MAX_REPORT_PRODUCTS = 5;
+const int MAX_REFUND_ITEMS = 50;
+const int MAX_ADMINS = 10;
+const int MAX_NAME_LENGTH = 50;
+const int MAX_ID_LENGTH = 20;
 #endif

@@ -1,3 +1,6 @@
+#ifndef PRODUCT.H
+#define PRODUCT.H
+
 #include<iostream>
 #include<string>
 #include "Globals.h"
@@ -91,7 +94,7 @@ public:
 		return expiryDate;
 	}
 	//Setter for expiry date
-	void setExpiryDate(string date){
+	void setExpiryDate(string date) {
 		expiryDate = date;
 	}
 	//Overriding function for perishable products
@@ -111,8 +114,57 @@ public:
 		cout << "Stocks: " << stockQty << " | ";
 		cout << "Expiry Date: " << expiryDate << " | ";
 		cout << "Tax 5%";
-		cout << "Discount 10%" <<" | ";
+		cout << "Discount 10%" << " | ";
 		cout << "Final: " << CURRENCY_SYMBOL << getFinalPrice() << endl;
 	}
-
-}
+};
+class ElectronicProduct : public Product {
+private:
+	string brand;
+	int warrantyMonths;
+public:
+	ElectronicProduct() :Produce() {
+		brand = "";
+		warrantyMonths = 0;
+		category = CAT_ELECTRONIC;
+	}
+	ElectronicProduct(int id, string n, double p, int qty, string b, int warranty) : Product(id, n, CAT_ELECTRONIC, p, qty) {
+		brand = b;
+		warrantyMonths = warranty;
+	}
+	//Getters
+	string getBrand() {
+		return brand;
+	}
+	int getWarrantyMonths() {
+		return warrantyMonths;
+	}
+	//Setters
+	void setBrand(string b) {
+		brand = b;
+	}
+	void setWarrantyMonths(int warranty) {
+		warrantyMonths = warranty;
+	}
+	//Overriding function for electronic products
+	double calculateTax() {
+		return price * TAX_ELECTRONIC;
+	}
+	double applyDiscount() {
+		return price * DISC_ELECTRONIC;
+	}
+	double getFinalPrice() {
+		return price + calculateTax() - applyDiscount();
+	}
+	void display() {
+		cout << "Product ID: " << productID << " | ";
+		cout << name << " | Brand: ";
+		cout << brand << " | ";
+		cout << CURRENCY_SYMBOL << price << " | ";
+		cout << "Stocks: " << stockQty << " | ";
+		cout << "Warranty: " << warrantyMonths << " months | ";
+		cout << "Tax 17%";
+		cout << "Discount 5%" << " | ";
+		cout << "Final: " << CURRENCY_SYMBOL << getFinalPrice() << endl;
+	}
+};

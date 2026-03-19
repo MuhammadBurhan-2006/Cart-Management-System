@@ -208,3 +208,4 @@ public:
 		cout << "Final: " << CURRENCY_SYMBOL << getFinalPrice() << endl;
 	}
 };
+#endif

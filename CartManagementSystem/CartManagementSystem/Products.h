@@ -168,3 +168,43 @@ public:
 		cout << "Final: " << CURRENCY_SYMBOL << getFinalPrice() << endl;
 	}
 };
+class GroceryProduct : public Product {
+private:
+	double weightKg;
+public:
+	GroceryProduct() : Product{
+		weightKg = 0.0;
+		category = CAT_GROCERY;
+	}
+	GroceryProduct(int id, string n, double p, int qty, double weight) : Product(id, n, CAT_GROCERY, p, qty) {
+		weightKg = wkg;
+	}
+	//Getter
+	double getWeightKg() {
+		return weightKg;
+	}
+	//Setter
+	void setWeightKg(double weight) {
+		weightKg = weight;
+	}
+	//Overriding function for grocery products
+	double calculateTax() {
+		return price * TAX_GROCERY;
+	}
+	double applyDiscount() {
+		return price * DISC_GROCERY;
+	}
+	double getFinalPrice() {
+		return price + calculateTax() - applyDiscount();
+	}
+	void display() {
+		cout << "Product ID: " << productID << " | ";
+		cout << name << " | ";
+		cout << CURRENCY_SYMBOL << price << " | ";
+		cout << "Stocks: " << stockQty << " | ";
+		cout << "Weight: " << weightKg << " kg | ";
+		cout << "Tax 0%";
+		cout << "Discount 8%" << " | ";
+		cout << "Final: " << CURRENCY_SYMBOL << getFinalPrice() << endl;
+	}
+};

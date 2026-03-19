@@ -24,5 +24,36 @@ public:
 		price = p;
 		stockQty = qty;
 	}
-
+	//Getters
+	int getProductID() {
+		return productID;
+	}
+	string getName() {
+		return name;
+	}
+	string getCategory() {
+		return category;
+	}
+	double getPrice() {
+		return price;
+	}
+	int getStockQty() {
+		return stockQty;
+	}
+	//Setters
+	void setProductID(int id) {
+		productID = id;
+	}
+	void setName(string n) {
+		name = n;
+	}
+	void setCategory(string cat) {
+		category = cat;
+	}
+	void setPrice(double p) {
+		return p;
+	}
+	void setStockQty(int qty) {
+		stockQty = qty;
+	}
 };

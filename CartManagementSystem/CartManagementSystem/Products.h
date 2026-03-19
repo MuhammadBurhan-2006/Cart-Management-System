@@ -56,4 +56,21 @@ public:
 	void setStockQty(int qty) {
 		stockQty = qty;
 	}
+	//Fuctions that would be overriden in other classes
+	double calculateTax() {
+		return 0.0;
+	}
+	double applyDiscount() {
+		return 0.0;
+	}
+	double getFinalPrice() {
+		return price + calculateTax() - applyDiscount();
+	}
+	void display(){
+		cout << "Product ID: " << productID << " | ";
+		cout << name << " | ";
+		cout << category << " | ";
+		cout << CURRENCY_SYMBOL << price << " | ";
+		cout << "Stocks: " << stockQty << endl;
+	}
 };

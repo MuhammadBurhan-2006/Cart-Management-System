@@ -94,4 +94,25 @@ public:
 	void setExpiryDate(string date){
 		expiryDate = date;
 	}
+	//Overriding function for perishable products
+	double calculateTax() {
+		return price * TAX_PERISHABLE;
+	}
+	double applyDiscount() {
+		return price * DISC_PERISHABLE;
+	}
+	double getFinalPrice() {
+		return price + calculateTax() - applyDiscount();
+	}
+	void display() {
+		cout << "Product ID: " << productID << " | ";
+		cout << name << " | ";
+		cout << CURRENCY_SYMBOL << price << " | ";
+		cout << "Stocks: " << stockQty << " | ";
+		cout << "Expiry Date: " << expiryDate << " | ";
+		cout << "Tax 5%";
+		cout << "Discount 10%" <<" | ";
+		cout << "Final: " << CURRENCY_SYMBOL << getFinalPrice() << endl;
+	}
+
 }

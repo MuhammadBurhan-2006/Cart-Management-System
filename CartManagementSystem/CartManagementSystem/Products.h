@@ -74,3 +74,24 @@ public:
 		cout << "Stocks: " << stockQty << endl;
 	}
 };
+//Perishable product class has been inherited from Product class and an extra thing expiry date has been added
+clas PerishableProduct : public Product{
+private:
+	string expiryDate;
+public:
+	PerishableProduct() : Product() {
+		expiryDate = "";
+		category = CAT_PERISHABLE;
+	}
+	PerishableProduct(int id, string n, double p, int qty, string expiry) : Product(id, n, CAT_PERISHABLE, p, qty) {
+		expiryDate = expiry;
+	}
+	//Getter for expiry date
+	string getExpiryDate() {
+		return expiryDate;
+	}
+	//Setter for expiry date
+	void setExpiryDate(string date){
+		expiryDate = date;
+	}
+}

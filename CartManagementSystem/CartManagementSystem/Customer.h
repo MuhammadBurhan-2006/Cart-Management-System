@@ -207,3 +207,105 @@ public:
     }
 };
 
+
+//handles final price calculation, coupon application, and prepares totals for receipt generation 
+//uses Globals.h:
+//  COUPON_1_CODE, COUPON_1_DISC  ("SAVE10" ? 10%)
+//  COUPON_2_CODE, COUPON_2_DISC  ("FLAT50" ? Rs.50 flat off)
+//  COUPON_3_CODE, COUPON_3_DISC  ("FRESH20" ? 20%)
+//  CURRENCY_SYMBOL
+//uses Products.h: indirectly via Cart 
+class Bill {
+private:
+    Cart* cart; //pointer to the customer's cart
+    Customer* customer;//pointer to the logged-in customer
+    double    subtotal;
+    double    totalTax;
+    double    totalDiscount;
+    double    couponDiscount;
+    double    grandTotal;
+    string    couponCode; 
+    bool      couponApplied;
+
+public:
+    Bill(Cart* c, Customer* cust) {
+        cart = c;
+        customer = cust;
+        subtotal = 0.0;
+        totalTax = 0.0;
+        totalDiscount = 0.0;
+        couponDiscount = 0.0;
+        grandTotal = 0.0;
+        couponCode = "";
+        couponApplied = false;
+    }
+
+    //Getters
+    double getSubtotal() { return subtotal; }
+    double getTotalTax() { return totalTax; }
+    double getTotalDiscount() { return totalDiscount; }
+    double getCouponDiscount() { return couponDiscount; }
+    double getGrandTotal() { return grandTotal; }
+    string getCouponCode() { return couponCode; }
+    bool   isCouponApplied() { return couponApplied; }
+
+    //validates and applies a coupon code to the bill
+    //coupon codes and values come from Globals.h
+    //called from: Checkout screen when customer clicks "Apply"
+    void applyCoupon(string code) {
+        if (couponApplied) {
+            cout << "A coupon has already been applied." << endl;
+            return;
+        }
+        if (code == COUPON_1_CODE) {// "SAVE10" ? 10% off
+            couponCode = code;
+            couponDiscount = subtotal * COUPON_1_DISC;
+            couponApplied = true;
+            cout << "Coupon applied: 10% off!" << endl;
+        }
+        else if (code == COUPON_2_CODE) {// "FLAT50" ? Rs.50 flat off
+            couponCode = code;
+            couponDiscount = COUPON_2_DISC;
+            couponApplied = true;
+            cout << "Coupon applied: Flat Rs.50 off!" << endl;
+        }
+        else if (code == COUPON_3_CODE) {// "FRESH20" ? 20% off
+            couponCode = code;
+            couponDiscount = subtotal * COUPON_3_DISC;
+            couponApplied = true;
+            cout << "Coupon applied: 20% off!" << endl;
+        }
+        else {
+            cout << "Invalid coupon code." << endl;
+        }
+    }
+
+    //core billing calculation 
+    //call this BEFORE displayBillSummary() or passing to FileManager
+    double calculateGrandTotal() {
+        subtotal = cart->getSubtotal();
+        totalTax = cart->getTotalTax();
+        totalDiscount = cart->getTotalDiscount();
+        grandTotal = subtotal + totalTax - totalDiscount - couponDiscount;
+        if (grandTotal < 0) grandTotal = 0; // check
+        return grandTotal;
+    }
+
+    //prints final bill summary to screen (Checkout screen)
+    //uses: CURRENCY_SYMBOL, RECEIPT_DIVIDER, RECEIPT_HEADER, RECEIPT_FOOTER from Globals.h
+    void displayBillSummary() {
+        cout << RECEIPT_HEADER << endl;
+        cout << "Customer: " << customer->getName() << endl;
+        cout << RECEIPT_DIVIDER << endl;
+        cart->displayCart();
+        cout << RECEIPT_DIVIDER << endl;
+        if (couponApplied) {
+            cout << "Coupon (" << couponCode << "): -"
+                << CURRENCY_SYMBOL << couponDiscount << endl;
+        }
+        cout << "GRAND TOTAL : " << CURRENCY_SYMBOL << grandTotal << endl;
+        cout << RECEIPT_FOOTER << endl;
+    }
+};
+
+#endif

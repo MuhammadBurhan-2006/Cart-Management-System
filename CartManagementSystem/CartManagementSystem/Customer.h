@@ -64,6 +64,7 @@ public:
         cout << "Phone       : " << phone << endl;
     }
 
+
 };
 
 //Holds a pointer to  Product and the quantity selected
@@ -205,3 +206,4 @@ public:
         cout << RECEIPT_DIVIDER << endl;
     }
 };
+

@@ -1,15 +1,5 @@
 #ifndef GUI_H
 #define GUI_H
-
-// ============================================================
-//  BurhanGUI.h  —  Muhammad Burhan (25L-2061) | Team Lead | Team 03
-//  CS1004 OOP | FAST-NUCES | Section BCY-2A
-//
-//  Contains Qt GUI screens:
-//  1. LoginScreen       — Main login screen (2 buttons: Admin / Customer)
-//  2. ProductCatalogScreen — Admin: Add / Edit / Delete products
-// ============================================================
-
 #include <QWidget>
 #include <QPushButton>
 #include <QLabel>

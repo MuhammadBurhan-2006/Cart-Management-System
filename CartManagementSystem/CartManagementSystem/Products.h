@@ -27,6 +27,7 @@ public:
 		price = p;
 		stockQty = qty;
 	}
+	virtual ~Product(){ }
 	//Getters
 	int getProductID() {
 		return productID;
@@ -60,16 +61,19 @@ public:
 		stockQty = qty;
 	}
 	//Fuctions that would be overriden in other classes
-	double calculateTax() {
+	virtual double calculateTax() {
 		return 0.0;
 	}
-	double applyDiscount() {
+	virtual double applyDiscount() {
 		return 0.0;
 	}
 	double getFinalPrice() {
 		return price + calculateTax() - applyDiscount();
 	}
-	void display(){
+	virtual string getExtraData() {
+		return "";
+	}
+	virtual void display(){
 		cout << "Product ID: " << productID << " | ";
 		cout << name << " | ";
 		cout << category << " | ";
@@ -78,7 +82,7 @@ public:
 	}
 };
 //Perishable product class has been inherited from Product class and an extra thing expiry date has been added
-clas PerishableProduct : public Product{
+class PerishableProduct : public Product{
 private:
 	string expiryDate;
 public:
@@ -90,7 +94,7 @@ public:
 		expiryDate = expiry;
 	}
 	//Getter for expiry date
-	string getExpiryDate() {
+	string getExpiryDate() const {
 		return expiryDate;
 	}
 	//Setter for expiry date
@@ -98,16 +102,16 @@ public:
 		expiryDate = date;
 	}
 	//Overriding function for perishable products
-	double calculateTax() {
+	double calculateTax() override {
 		return price * TAX_PERISHABLE;
 	}
-	double applyDiscount() {
+	double applyDiscount() override {
 		return price * DISC_PERISHABLE;
 	}
-	double getFinalPrice() {
-		return price + calculateTax() - applyDiscount();
+	string getExtraData() override {
+		return expiryDate;
 	}
-	void display() {
+	void display() override {
 		cout << "Product ID: " << productID << " | ";
 		cout << name << " | ";
 		cout << CURRENCY_SYMBOL << price << " | ";
@@ -123,7 +127,7 @@ private:
 	string brand;
 	int warrantyMonths;
 public:
-	ElectronicProduct() :Produce() {
+	ElectronicProduct() : Product() {
 		brand = "";
 		warrantyMonths = 0;
 		category = CAT_ELECTRONIC;
@@ -133,10 +137,10 @@ public:
 		warrantyMonths = warranty;
 	}
 	//Getters
-	string getBrand() {
+	string getBrand() const {
 		return brand;
 	}
-	int getWarrantyMonths() {
+	int getWarrantyMonths() const {
 		return warrantyMonths;
 	}
 	//Setters
@@ -147,16 +151,16 @@ public:
 		warrantyMonths = warranty;
 	}
 	//Overriding function for electronic products
-	double calculateTax() {
+	double calculateTax() override {
 		return price * TAX_ELECTRONIC;
 	}
-	double applyDiscount() {
+	double applyDiscount() override {
 		return price * DISC_ELECTRONIC;
 	}
-	double getFinalPrice() {
-		return price + calculateTax() - applyDiscount();
+	string getExtraData() override {
+		return brand + "," + to_string(warrantyMonths);
 	}
-	void display() {
+	void display() override {
 		cout << "Product ID: " << productID << " | ";
 		cout << name << " | Brand: ";
 		cout << brand << " | ";
@@ -172,15 +176,15 @@ class GroceryProduct : public Product {
 private:
 	double weightKg;
 public:
-	GroceryProduct() : Product{
+	GroceryProduct() : Product(){
 		weightKg = 0.0;
 		category = CAT_GROCERY;
 	}
 	GroceryProduct(int id, string n, double p, int qty, double weight) : Product(id, n, CAT_GROCERY, p, qty) {
-		weightKg = wkg;
+		weightKg = weight;
 	}
 	//Getter
-	double getWeightKg() {
+	double getWeightKg() const {
 		return weightKg;
 	}
 	//Setter
@@ -188,16 +192,16 @@ public:
 		weightKg = weight;
 	}
 	//Overriding function for grocery products
-	double calculateTax() {
+	double calculateTax() override {
 		return price * TAX_GROCERY;
 	}
-	double applyDiscount() {
+	double applyDiscount() override {
 		return price * DISC_GROCERY;
 	}
-	double getFinalPrice() {
-		return price + calculateTax() - applyDiscount();
+	string getExtraData() override {
+		return to_string(weightKg);
 	}
-	void display() {
+	void display() override {
 		cout << "Product ID: " << productID << " | ";
 		cout << name << " | ";
 		cout << CURRENCY_SYMBOL << price << " | ";

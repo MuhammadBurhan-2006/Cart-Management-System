@@ -2,6 +2,13 @@
 #include "Globals.h"
 #include "Products.h"
 #include "Customer.h"
+// ---------------------------------------------------------------
+//  FileManager is OPTIONAL.
+//  Comment the next two lines out and main still compiles fine.
+//  Un-comment them to enable file persistence (save/load/receipt).
+#include "FileManager.h"
+#define USE_FILE_MANAGER   // comment this out to skip FM demo
+// ---------------------------------------------------------------
 using namespace std;
 
 int main() {
@@ -93,12 +100,10 @@ int main() {
     cout << "Grand Total : " << CURRENCY_SYMBOL << bill1.getGrandTotal() << endl << endl;
 
     // ===== TEST 9: Coupon SAVE10 (10% off) =====
-    // BUG FIX 4: calculateGrandTotal() MUST come before applyCoupon()
-    // so subtotal is set before coupon reads it. Order was wrong before.
     cout << "TEST 9: Testing Coupon - SAVE10..." << endl;
     cout << "-----------------------------------" << endl;
     Bill bill2(&cart, &customer);
-    bill2.applyCoupon("SAVE10");      // FIX: cart->getSubtotal() used inside now — order doesn't matter anymore
+    bill2.applyCoupon("SAVE10");
     bill2.calculateGrandTotal();
     cout << "Grand Total with SAVE10: " << CURRENCY_SYMBOL << bill2.getGrandTotal() << endl << endl;
 
@@ -140,15 +145,127 @@ int main() {
     cart.clearCart();
     cout << "Items in cart after clearing: " << cart.getItemCount() << endl << endl;
 
-    // Cleanup
+    cout << "========================================" << endl;
+    cout << "  ALL ORIGINAL TESTS COMPLETED!" << endl;
+    cout << "========================================" << endl << endl;
+
+    // ============================================================
+    //  FILE MANAGER DEMO  (only runs if #define USE_FILE_MANAGER)
+    //  Remove the #define above to skip this entire block.
+    // ============================================================
+#ifdef USE_FILE_MANAGER
+
+    cout << "========================================" << endl;
+    cout << "  FILE MANAGER DEMO" << endl;
+    cout << "  Abdul Rehman (25L-2074)" << endl;
+    cout << "========================================" << endl << endl;
+
+    // Step 1 — create data/ folders automatically
+    FileManager::initDataFolders();
+    cout << endl;
+
+    // Step 2 — save the products we created above to file
+    cout << "--- Saving products to file ---" << endl;
+    Product* allProducts[MAX_PRODUCTS];
+    int productCount = 0;
+    allProducts[productCount++] = milk;
+    allProducts[productCount++] = rice;
+    allProducts[productCount++] = phone;
+    allProducts[productCount++] = apple;
+    FileManager::saveProducts(allProducts, productCount);
+    cout << endl;
+
+    // Step 3 — reload products from file and display them
+    cout << "--- Loading products back from file ---" << endl;
+    Product* loaded[MAX_PRODUCTS];
+    int loadedCount = FileManager::loadProducts(loaded, MAX_PRODUCTS);
+    for (int i = 0; i < loadedCount; i++) {
+        loaded[i]->display();
+    }
+    cout << endl;
+
+    // Step 4 — save the customer to file
+    cout << "--- Saving customer to file ---" << endl;
+    FileManager::saveNewCustomer(customer, "password123");
+    cout << endl;
+
+    // Step 5 — reload customers and test login
+    cout << "--- Loading customers & validating login ---" << endl;
+    Customer customers[MAX_CUSTOMERS];
+    int custCount = FileManager::loadCustomers(customers, MAX_CUSTOMERS);
+    int idx = FileManager::validateCustomerLogin(customers, custCount, "ali123", "password123");
+    if (idx >= 0)
+        cout << "Customer login verified from file: " << customers[idx].getName() << endl;
+    else
+        cout << "Customer login failed from file." << endl;
+    cout << endl;
+
+    // Step 6 — rebuild a cart and bill to save receipt + sales log
+    cout << "--- Generating receipt & sales log ---" << endl;
+    Cart demoCart;
+    demoCart.addItem(milk, 2);
+    demoCart.addItem(rice, 1);
+    demoCart.addItem(phone, 1);
+
+    Bill demoBill(&demoCart, &customer);
+    demoBill.applyCoupon("SAVE10");
+    demoBill.calculateGrandTotal();
+
+    string receiptID = FileManager::generateReceiptID(1);
+    string timestamp = "2025-06-01 14:30:00"; // replace with real time in full system
+
+    FileManager::saveReceipt(demoBill, demoCart,
+        customer.getName(), receiptID, timestamp);
+
+    FileManager::appendSalesLog(receiptID, customer.getName(), demoCart,
+        demoBill.getSubtotal(),
+        demoBill.getTotalTax(),
+        demoBill.getTotalDiscount(),
+        demoBill.getCouponDiscount(),
+        demoBill.getGrandTotal(),
+        timestamp);
+    cout << endl;
+
+    // Step 7 — generate sales report
+    cout << "--- Generating sales report ---" << endl;
+    string reportID = FileManager::generateReportID(1);
+    FileManager::generateSalesReport(reportID, timestamp);
+    cout << endl;
+
+    // Step 8 — log a refund
+    cout << "--- Logging a refund ---" << endl;
+    double refundAmt = demoBill.getGrandTotal() * (1.0 - REFUND_RESTOCKING_FEE);
+    double restockFee = demoBill.getGrandTotal() * REFUND_RESTOCKING_FEE;
+    FileManager::appendRefundLog(receiptID, customer.getName(),
+        refundAmt, restockFee, timestamp);
+    cout << endl;
+
+    // Admin login check
+    cout << "--- Admin login check ---" << endl;
+    if (FileManager::validateAdminLogin("admin", "admin123"))
+        cout << "Admin login: SUCCESS" << endl;
+    else
+        cout << "Admin login: FAILED" << endl;
+    cout << endl;
+
+    // Cleanup loaded[] array (these are new objects from loadProducts)
+    for (int i = 0; i < loadedCount; i++) {
+        delete loaded[i];
+        loaded[i] = nullptr;
+    }
+
+    cout << "========================================" << endl;
+    cout << "  FILE MANAGER DEMO COMPLETE!" << endl;
+    cout << "  Check the data/ folder for output." << endl;
+    cout << "========================================" << endl << endl;
+
+#endif // USE_FILE_MANAGER
+
+    // Cleanup original products
     delete milk;
     delete rice;
     delete phone;
     delete apple;
-
-    cout << "========================================" << endl;
-    cout << "  ALL TESTS COMPLETED SUCCESSFULLY!" << endl;
-    cout << "========================================" << endl;
 
     system("pause");
     return 0;

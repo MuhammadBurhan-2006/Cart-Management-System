@@ -15,6 +15,7 @@
 #include <QFont>
 #include "Globals.h"
 #include "Products.h"
+#include "Customer.h"
 using namespace std;
 
 // ============================================================

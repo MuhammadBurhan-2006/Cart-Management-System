@@ -1,5 +1,5 @@
-#ifndef CUSTOMER_MODULE_H
-#define CUSTOMER_MODULE_H
+#ifndef CUSTOMER_H
+#define CUSTOMER_H
 
 #include <iostream>
 #include <string>

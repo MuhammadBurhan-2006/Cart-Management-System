@@ -1,0 +1,4 @@
+P|1|Fresh Milk 1L|150.0|50|2025-06-30|
+P|4|Red Apple|50.0|200|2025-05-15|
+E|3|Samsung Phone|45000.0|15|Samsung|12|
+G|2|Basmati Rice 5kg|800.0|100|5.0|

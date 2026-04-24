@@ -1,9 +1,11 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\CartManagementSystem",
-    "\\CartManagementSystem\\CartManagementSystem"
+    ""
   ],
+<<<<<<< HEAD
   "SelectedNode": "\\CartManagementSystem\\CartManagementSystem\\Customer.h",
+=======
+  "SelectedNode": "\\C:\\Users\\HP\\Desktop\\OOP_PROJECT",
+>>>>>>> f368e8328c805c11011e8226892de673e01a2b4b
   "PreviewInSolutionExplorer": false
 }

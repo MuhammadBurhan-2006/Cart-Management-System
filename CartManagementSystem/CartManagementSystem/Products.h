@@ -1,5 +1,5 @@
-#ifndef PRODUCT.H
-#define PRODUCT.H
+#ifndef PRODUCTS.H
+#define PRODUCTS.H
 
 #include<iostream>
 #include<string>
@@ -55,7 +55,7 @@ public:
 		category = cat;
 	}
 	void setPrice(double p) {
-		return p;
+		price = p;
 	}
 	void setStockQty(int qty) {
 		stockQty = qty;

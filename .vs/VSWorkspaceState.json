@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\CartManagementSystem",
+    "\\CartManagementSystem\\CartManagementSystem"
   ],
+  "SelectedNode": "\\CartManagementSystem\\GUI.h",
   "PreviewInSolutionExplorer": false
 }

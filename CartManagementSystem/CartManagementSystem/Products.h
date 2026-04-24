@@ -70,6 +70,9 @@ public:
 	double getFinalPrice() {
 		return price + calculateTax() - applyDiscount();
 	}
+	virtual string getExtraData() {
+		return "";
+	}
 	virtual void display(){
 		cout << "Product ID: " << productID << " | ";
 		cout << name << " | ";
@@ -104,6 +107,9 @@ public:
 	}
 	double applyDiscount() override {
 		return price * DISC_PERISHABLE;
+	}
+	string getExtraData() override {
+		return expiryDate;
 	}
 	void display() override {
 		cout << "Product ID: " << productID << " | ";
@@ -151,6 +157,9 @@ public:
 	double applyDiscount() override {
 		return price * DISC_ELECTRONIC;
 	}
+	string getExtraData() override {
+		return brand + "," + to_string(warrantyMonths);
+	}
 	void display() override {
 		cout << "Product ID: " << productID << " | ";
 		cout << name << " | Brand: ";
@@ -188,6 +197,9 @@ public:
 	}
 	double applyDiscount() override {
 		return price * DISC_GROCERY;
+	}
+	string getExtraData() override {
+		return to_string(weightKg);
 	}
 	void display() override {
 		cout << "Product ID: " << productID << " | ";

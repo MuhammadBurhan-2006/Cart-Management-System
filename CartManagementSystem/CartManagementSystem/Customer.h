@@ -257,9 +257,10 @@ public:
             cout << "A coupon has already been applied." << endl;
             return;
         }
+        double currentSubtotal = cart->getSubtotal(); // FIX: always get live value
         if (code == COUPON_1_CODE) {// "SAVE10" ? 10% off
             couponCode = code;
-            couponDiscount = subtotal * COUPON_1_DISC;
+            couponDiscount = currentSubtotal * COUPON_1_DISC;
             couponApplied = true;
             cout << "Coupon applied: 10% off!" << endl;
         }

@@ -1,5 +1,5 @@
-#ifndef PRODUCTS.H
-#define PRODUCTS.H
+#ifndef PRODUCTS_H
+#define PRODUCTS_H
 
 #include<iostream>
 #include<string>

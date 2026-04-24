@@ -1,0 +1,2 @@
+# Supermarket Refunds Log
+# Format: see FileManager.h Section 6

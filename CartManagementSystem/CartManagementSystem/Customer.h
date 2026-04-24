@@ -307,5 +307,3 @@ public:
         cout << RECEIPT_FOOTER << endl;
     }
 };
-
-#endif

@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <string>
-#include "globals.h"
+#include "Globals.h"
 #include "Products.h"
 #include "FileManager.h"
 #include <fstream> //For File Handling
@@ -32,16 +32,16 @@ private:
 		int result = 0;
 		int i = 0;
 		bool negative = false;
-		if (!str.empty() && str[i] == '-') { 
-			negative = true; 
-			i++; 
+		if (!str.empty() && str[i] == '-') {
+			negative = true;
+			i++;
 		}
 
 		for (; i < (int)str.size(); i++) {
 			if (str[i] < '0' || str[i] > '9') break;
 			result = result * 10 + (str[i] - '0');
 		}
-		
+
 		if (result < 0)
 			return -result; //Less Than 0 So Return Neg
 		else
@@ -54,33 +54,33 @@ private:
 		int i = 0;
 		bool negative = false;
 		//Check if Number is Negative
-		if (!str.empty() && str[i] == '-') { 
-			negative = true; 
-			i++; 
+		if (!str.empty() && str[i] == '-') {
+			negative = true;
+			i++;
 		}
 
 		//If Number is an Integer
 		for (; i < (int)str.size() && str[i] != '.'; i++) {
-			if (str[i] < '0' || str[i] > '9') 
+			if (str[i] < '0' || str[i] > '9')
 				break;
 			result = result * 10.0 + (str[i] - '0');
 		}
-		
+
 		//If Number is a Decimal
 		if (i < (int)str.size() && str[i] == '.') {
 			i++;
 			double fraction = 0.1;
 			for (; i < (int)str.size(); i++) {
-				if (str[i] < '0' || str[i] > '9') 
+				if (str[i] < '0' || str[i] > '9')
 					break;
 				result += (str[i] - '0') * fraction;
 				fraction *= 0.1;
 			}
 		}
 
-		if (result < 0.0) 
+		if (result < 0.0)
 			return -result; //Less Than 0 So Return Neg
-		else 
+		else
 			return result;
 	}
 
@@ -95,7 +95,7 @@ private:
 	// Checks if str1 == str2 Manually
 	bool strEquals(const string& str1, const string& str2) {
 		if (str1.size() != str2.size()) return false;
-		
+
 		for (int i = 0; i < (int)str1.size(); i++) {
 			if (str1[i] != str2[i]) return false;
 		}
@@ -127,7 +127,7 @@ public:
 			this->productCount++;
 		}
 		else {
-			cout << "Stock is Full! Can't Add More Products." <<endl;
+			cout << "Stock is Full! Can't Add More Products." << endl;
 		}
 	}
 
@@ -143,17 +143,17 @@ public:
 	void removeProduct(int productID) {
 		int index = findProductIndex(productID);
 		if (index == -1) {
-			cout << "Error! Product ID " << productID << " Does NOT Exist!" <<endl;
-			
+			cout << "Error! Product ID " << productID << " Does NOT Exist!" << endl;
+
 			return;
 		}
-		
+
 		delete this->products[index];
 		//Shifts Remaining Products to Left
 		for (int i = index; i < this->productCount - 1; i++) {
 			this->products[i] = this->products[i + 1];
 		}
-		
+
 		this->products[this->productCount - 1] = nullptr;
 		this->productCount--;
 	}
@@ -165,7 +165,7 @@ public:
 			cout << "Error! Product ID " << prodID << " Does NOT Exist!" << endl;
 			return;
 		}
-		
+
 		this->products[index]->setStockQty(newQty);
 		saveStock();
 	}
@@ -203,7 +203,7 @@ public:
 	Product* getProduct(int index) const {
 		if (index >= 0 && index < productCount)
 			return this->products[index];
-		
+
 		return nullptr;
 	}
 

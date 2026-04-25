@@ -116,5 +116,3 @@ int main(int argc, char* argv[]) {
     loginScreen->show();
     return app.exec();
 }
-
-#include "main.moc"

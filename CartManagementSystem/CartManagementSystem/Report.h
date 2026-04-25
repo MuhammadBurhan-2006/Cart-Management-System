@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "globals.h"
+#include "Globals.h"
 #include "FileManager.h"
 
 using namespace std;
@@ -33,10 +33,10 @@ private:
 					break;
 				}
 			}
-			if (match) 
+			if (match)
 				return true;
 		}
-		
+
 		return false;
 	}
 
@@ -76,7 +76,7 @@ private:
 
 		if (numStr == "" || numStr == "-")
 			return 0.0;
-		
+
 		return convDouble(numStr);
 	}
 
@@ -108,7 +108,7 @@ private:
 				fraction *= 0.1;
 			}
 		}
-		
+
 		if (result < 0.0)
 			return -result; //Less Than 0 So Return Neg
 		else
@@ -126,7 +126,7 @@ private:
 			negative = true;
 			i++;
 		}
-		
+
 		for (; i < (int)str.size(); i++) {
 			if (str[i] < '0' || str[i] > '9') break;
 			result = result * 10 + (str[i] - '0');
@@ -156,7 +156,7 @@ private:
 		}
 
 		if (end >= (int)line.size() - 1) return "";
-		
+
 		return line.substr(start, end - start);
 	}
 
@@ -182,9 +182,9 @@ private:
 			pos++;
 		}
 
-		if (qtyStr == "") 
+		if (qtyStr == "")
 			return 0;
-		
+
 		return convInt(qtyStr);
 	}
 
@@ -216,7 +216,7 @@ private:
 				inItems = false;
 				continue;
 			}
-			if (!inItems || line == "") 
+			if (!inItems || line == "")
 				continue;
 
 			string name = extractProductName(line);
@@ -376,7 +376,7 @@ public:
 
 		ifstream file(FILE_SALES_LOG);
 		if (!file.is_open()) {
-			cout << "ERROR! Could Not Open " << FILE_SALES_LOG <<endl;
+			cout << "ERROR! Could Not Open " << FILE_SALES_LOG << endl;
 			return;
 		}
 
@@ -385,11 +385,14 @@ public:
 			if (lineContains(line, "Grand Total")) {
 				totalRevenue += extractValue(line);
 				totalTransactions++;
-			} else if (lineContains(line, "Tax             :")) {
+			}
+			else if (lineContains(line, "Tax             :")) {
 				totalTax += extractValue(line);
-			} else if (lineContains(line, "Item Discounts  :")) {
+			}
+			else if (lineContains(line, "Item Discounts  :")) {
 				totalDiscounts += extractValue(line);
-			} else if (lineContains(line, "Coupon Discount :")) {
+			}
+			else if (lineContains(line, "Coupon Discount :")) {
 				totalDiscounts += extractValue(line);
 			}
 		}

@@ -1,4 +1,4 @@
-#ifndef CUSTOMER_H
+ï»¿#ifndef CUSTOMER_H
 #define CUSTOMER_H
 
 #include <iostream>
@@ -38,10 +38,10 @@ public:
     }
 
     //Getters
-    int    getCustomerID() { return customerID; }
-    string getName() { return name; }
-    string getUsername() { return username; }
-    string getPhone() { return phone; }
+    int    getCustomerID() const { return customerID; }
+    string getName() const { return name; }
+    string getUsername() const { return username; }
+    string getPhone() const { return phone; }
 
     //Setters
     void setCustomerID(int id) { customerID = id; }
@@ -162,7 +162,7 @@ public:
     }
 
     //calculates total TAX across all items
-    //uses: Product::calculateTax() — overridden in each subclass
+    //uses: Product::calculateTax() ï¿½ overridden in each subclass
     double getTotalTax() {
         double tax = 0.0;
         for (int i = 0; i < itemCount; i++) {
@@ -172,7 +172,7 @@ public:
     }
 
     //calculates total DISCOUNT across all items
-    //uses: Product::applyDiscount() — overridden in each subclass
+    //uses: Product::applyDiscount() ï¿½ overridden in each subclass
     double getTotalDiscount() {
         double disc = 0.0;
         for (int i = 0; i < itemCount; i++) {
@@ -224,7 +224,7 @@ private:
     double    totalDiscount;
     double    couponDiscount;
     double    grandTotal;
-    string    couponCode; 
+    string    couponCode;
     bool      couponApplied;
 
 public:
@@ -308,3 +308,4 @@ public:
         cout << RECEIPT_FOOTER << endl;
     }
 };
+#endif

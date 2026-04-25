@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 #include "globals.h"
-#include "Product.h"
+#include "Products.h"
 #include "FileManager.h"
 #include <fstream> //For File Handling
 

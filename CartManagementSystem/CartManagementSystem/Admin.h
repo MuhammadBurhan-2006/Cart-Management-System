@@ -2,9 +2,14 @@
 #define ADMIN_H
 
 #include <string>
-#include "globals.h"
+#include "Globals.h"
 using namespace std;
 
+// ============================================================
+//  Admin — Khubaib
+//  NOTE: Admin.cpp merged here — no separate .cpp needed
+//  because this is a simple class with no circular dependencies
+// ============================================================
 class Admin {
 private:
     string adminID;
@@ -12,24 +17,29 @@ private:
     string password;
 
 public:
-    //Constructor
-    Admin(string id, string user, string pass);
-    
-    //Default Constructor In Case Needed
-    Admin();
+    // Default Constructor
+    Admin() {
+        adminID = "";
+        username = "";
+        password = "";
+    }
 
-    //Compares Given Credentials Against Stored Ones
-    bool login(string user, string pass);
+    // Parameterized Constructor
+    Admin(string id, string user, string pass) {
+        adminID = id;
+        username = user;
+        password = pass;
+    }
 
-    //Getters
-    //Get Admin ID  
-    string getAdminID();
+    // Compares given credentials against stored ones
+    bool login(string user, string pass) {
+        return (user == username && pass == password);
+    }
 
-	//Get The Username Of Admin
-    string getUsername();
-
-	//Get The Password Of Admin
-	string getPassword();
+    // Getters
+    string getAdminID() { return adminID; }
+    string getUsername() { return username; }
+    string getPassword() { return password; }
 };
 
 #endif

@@ -1,5 +1,6 @@
 #ifndef GUI_H
 #define GUI_H
+
 #include <QWidget>
 #include <QPushButton>
 #include <QLabel>
@@ -15,6 +16,11 @@
 #include <QFont>
 #include "Globals.h"
 #include "Products.h"
+#include "Customer.h"
+#include "Admin.h"
+#include "FileManager.h"
+#include "StockManager.h"
+#include "Report.h"
 using namespace std;
 
 // ============================================================
@@ -42,7 +48,6 @@ private slots:
         }
         emit adminLoginRequested(user, pass);
     }
-
     void onCustomerClicked() {
         QString user = txtUsername->text().trimmed();
         QString pass = txtPassword->text().trimmed();
@@ -131,7 +136,7 @@ private:
             QPushButton#btnCustomer:hover { background:#277a3e; }
         )");
     }
-};
+};  // BUG FIX: missing closing brace of LoginScreen was here
 
 
 // ============================================================
@@ -155,7 +160,6 @@ public:
         }
     }
 
-    // Called by FileManager (Abdur-Rehman) to populate table from file
     void loadProducts(Product* products[], int count) {
         for (int i = 0; i < productCount; i++) delete productList[i];
         productCount = 0;
@@ -348,7 +352,6 @@ private:
             tblProducts->setItem(row, 3, new QTableWidgetItem(
                 QString::fromStdString(CURRENCY_SYMBOL) + QString::number(p->getPrice(), 'f', 2)));
             tblProducts->setItem(row, 4, new QTableWidgetItem(QString::number(p->getStockQty())));
-
             QString extra;
             string cat = p->getCategory();
             if (cat == CAT_PERISHABLE) {
@@ -367,8 +370,6 @@ private:
             tblProducts->setItem(row, 5, new QTableWidgetItem(extra));
             tblProducts->setItem(row, 6, new QTableWidgetItem(
                 QString::fromStdString(CURRENCY_SYMBOL) + QString::number(p->getFinalPrice(), 'f', 2)));
-
-            // Color by stock level using Globals.h thresholds
             QColor c = Qt::white;
             if (p->getStockQty() <= STOCK_CRITICAL_THRESHOLD) c = QColor("#ffe4e4");
             else if (p->getStockQty() <= STOCK_LOW_THRESHOLD)      c = QColor("#fff8d6");

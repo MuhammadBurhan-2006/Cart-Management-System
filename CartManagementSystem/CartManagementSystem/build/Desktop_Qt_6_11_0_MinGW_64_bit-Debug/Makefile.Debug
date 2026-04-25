@@ -363,13 +363,17 @@ debug/moc_GUI.cpp: ../../GUI.h \
 		C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
 		C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialogbuttonbox.h \
 		C:/Qt/6.11.0/mingw_64/include/QtGui/QFont \
+		C:/Qt/6.11.0/mingw_64/include/QtWidgets/QStackedWidget \
+		C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstackedwidget.h \
+		C:/Qt/6.11.0/mingw_64/include/QtWidgets/QSpinBox \
+		C:/Qt/6.11.0/mingw_64/include/QtWidgets/qspinbox.h \
+		C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFrame \
 		../../Globals.h \
 		../../Products.h \
 		../../Customer.h \
 		../../Admin.h \
 		../../FileManager.h \
 		../../StockManager.h \
-		../../globals.h \
 		../../Report.h \
 		debug/moc_predefs.h \
 		C:/Qt/6.11.0/mingw_64/bin/moc.exe
@@ -604,7 +608,6 @@ debug/main.o: ../../main.cpp C:/Qt/6.11.0/mingw_64/include/QtWidgets/QApplicatio
 		../../Admin.h \
 		../../FileManager.h \
 		../../StockManager.h \
-		../../globals.h \
 		../../Report.h \
 		../../GUI.h \
 		C:/Qt/6.11.0/mingw_64/include/QtWidgets/QWidget \
@@ -653,7 +656,12 @@ debug/main.o: ../../main.cpp C:/Qt/6.11.0/mingw_64/include/QtWidgets/QApplicatio
 		C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGridLayout \
 		C:/Qt/6.11.0/mingw_64/include/QtWidgets/QGroupBox \
 		C:/Qt/6.11.0/mingw_64/include/QtWidgets/qgroupbox.h \
-		C:/Qt/6.11.0/mingw_64/include/QtGui/QFont
+		C:/Qt/6.11.0/mingw_64/include/QtGui/QFont \
+		C:/Qt/6.11.0/mingw_64/include/QtWidgets/QStackedWidget \
+		C:/Qt/6.11.0/mingw_64/include/QtWidgets/qstackedwidget.h \
+		C:/Qt/6.11.0/mingw_64/include/QtWidgets/QSpinBox \
+		C:/Qt/6.11.0/mingw_64/include/QtWidgets/qspinbox.h \
+		C:/Qt/6.11.0/mingw_64/include/QtWidgets/QFrame
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/main.o ../../main.cpp
 
 debug/moc_GUI.o: debug/moc_GUI.cpp 

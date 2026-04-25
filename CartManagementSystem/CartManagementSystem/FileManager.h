@@ -2,10 +2,10 @@
 #define FILEMANAGER_H
 
 // ============================================================
-//  FileManager.h  �  Abdul Rehman (25L-2074)
+//  FileManager.h  —  Abdul Rehman (25L-2074)
 //  Handles ALL file I/O for the Supermarket Billing System.
 //
-//  OPTIONAL INCLUDE � main.cpp works WITHOUT this file.
+//  OPTIONAL INCLUDE — main.cpp works WITHOUT this file.
 //  Add #include "FileManager.h" only when you want persistence.
 //
 //  Depends on: Globals.h, Products.h, Customer.h
@@ -28,7 +28,7 @@ class FileManager {
 public:
 
     // ============================================================
-    //  SECTION 1 � PRODUCT FILE  (data/products.txt)
+    //  SECTION 1 — PRODUCT FILE  (data/products.txt)
     //
     //  File format (one product per line):
     //      P|id|name|price|qty|expiryDate
@@ -43,7 +43,7 @@ public:
         ifstream fin(FILE_PRODUCTS);
         if (!fin.is_open()) {
             cout << "[FileManager] Warning: Cannot open " << FILE_PRODUCTS
-                << " � starting with empty product list." << endl;
+                << " — starting with empty product list." << endl;
             return 0;
         }
         int count = 0;
@@ -136,7 +136,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 2 � CUSTOMER FILE  (data/customers.txt)
+    //  SECTION 2 — CUSTOMER FILE  (data/customers.txt)
     //
     //  File format:
     //      id|name|username|password|phone
@@ -147,7 +147,7 @@ public:
         ifstream fin(FILE_CUSTOMERS);
         if (!fin.is_open()) {
             cout << "[FileManager] Warning: Cannot open " << FILE_CUSTOMERS
-                << " � no existing customers." << endl;
+                << " — no existing customers." << endl;
             return 0;
         }
         int    count = 0;
@@ -170,8 +170,6 @@ public:
 
     // Appends one new customer to the file.
     // Called from: registration screen.
-    // NOTE: Customer::password is private � add getPassword() to Customer if needed.
-    //       For now we write a placeholder; replace with c.getPassword() once getter exists.
     static void saveNewCustomer(const Customer& c, const string& password) {
         ofstream fout(FILE_CUSTOMERS, ios::app);
         if (!fout.is_open()) {
@@ -181,7 +179,7 @@ public:
         fout << c.getCustomerID() << "|"
             << c.getName() << "|"
             << c.getUsername() << "|"
-            << password << "|"   // pass raw password here from registration form
+            << password << "|"
             << c.getPhone() << "|\n";
         fout.close();
     }
@@ -197,7 +195,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 3 � ADMIN LOGIN  (data/admins.txt)
+    //  SECTION 3 — ADMIN LOGIN  (data/admins.txt)
     //
     //  File format:
     //      id|name|username|password
@@ -219,7 +217,7 @@ public:
             if (line.empty()) continue;
             stringstream ss(line);
             string tok, name, user, pass;
-            getline(ss, tok, '|'); // id � unused here
+            getline(ss, tok, '|'); // id — unused here
             getline(ss, name, '|');
             getline(ss, user, '|');
             getline(ss, pass, '|');
@@ -234,7 +232,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 4 � SALES LOG  (data/sales_log.txt)
+    //  SECTION 4 — SALES LOG  (data/sales_log.txt)
     //  Appends one transaction block per checkout.
     // ============================================================
 
@@ -278,7 +276,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 5 � RECEIPT FILE  (data/receipts/RCP-XXXX.txt)
+    //  SECTION 5 — RECEIPT FILE  (data/receipts/RCP-XXXX.txt)
     //  One .txt file per transaction.
     // ============================================================
 
@@ -328,7 +326,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 6 � REFUND LOG  (data/refunds.txt)
+    //  SECTION 6 — REFUND LOG  (data/refunds.txt)
     // ============================================================
 
     static void appendRefundLog(const string& originalReceiptID,
@@ -355,7 +353,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 7 � SALES REPORT  (data/reports/RPT-XXXX.txt)
+    //  SECTION 7 — SALES REPORT  (data/reports/RPT-XXXX.txt)
     //  Reads sales_log.txt and writes a summary.
     // ============================================================
 
@@ -402,7 +400,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 8 � UTILITY HELPERS
+    //  SECTION 8 — UTILITY HELPERS
     // ============================================================
 
     // Generate receipt ID like "RCP-0042"
@@ -419,13 +417,20 @@ public:
         return REPORT_ID_PREFIX + n;
     }
 
-    // Creates the required data folders if they don't exist.
-    // Call once at program startup.
-    // Works on Windows (Visual Studio / MSVC environment).
+    // ✅ FIX: Creates required data folders if they don't exist.
+    // Cross-platform — Windows aur Linux/Mac dono pe kaam karta hai.
+    // Call once at program startup (main.cpp mein QDir::setCurrent ke baad).
     static void initDataFolders() {
+#ifdef _WIN32
+        // Windows
         system("if not exist data mkdir data");
         system("if not exist data\\receipts mkdir data\\receipts");
         system("if not exist data\\reports  mkdir data\\reports");
+#else
+        // Linux / Mac
+        system("mkdir -p data/receipts");
+        system("mkdir -p data/reports");
+#endif
         cout << "[FileManager] Data folders ready." << endl;
     }
 

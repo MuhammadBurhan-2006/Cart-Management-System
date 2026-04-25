@@ -3,6 +3,8 @@
 // ============================================================
 
 #include <QApplication>
+#include <QDir>                   // ✅ FIX: Working directory set karne ke liye
+#include <QCoreApplication>       // ✅ FIX: applicationDirPath() ke liye
 #include <QMessageBox>
 #include "Globals.h"
 #include "Products.h"
@@ -17,6 +19,11 @@ using namespace std;
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
     app.setFont(QFont("Arial", 12));
+
+    // ✅ FIX: Working directory ko executable ki location pe set karo
+    // Chahe koi bhi PC pe run kare, data/ folder wahan se dhundega
+    // jahan .exe bana hai — jo DESTDIR = $$PWD ki wajah se project folder hoga
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
 
     // ---- Step 1: Create data folders ----
     FileManager::initDataFolders();

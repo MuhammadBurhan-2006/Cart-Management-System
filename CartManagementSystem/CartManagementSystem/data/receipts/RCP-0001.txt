@@ -1,0 +1,15 @@
+===== SUPERMARKET BILLING SYSTEM =====
+Receipt ID  : RCP-0001
+Customer    : Areeba Akbar
+Date / Time : 2026-04-26 01:38:11
+-----------------------------------------
+  #  Name                     Qty    Price         Total
+-----------------------------------------
+  1  s26 ultra		5	Rs.700000	Rs.3.5e+06
+-----------------------------------------
+Subtotal        : Rs.3.5e+06
+Tax             : Rs.595000
+Item Discounts  : Rs.175000
+-----------------------------------------
+GRAND TOTAL     : Rs.3.92e+06
+==== Thank you for shopping with us! ===

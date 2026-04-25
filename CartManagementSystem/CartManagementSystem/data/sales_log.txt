@@ -1,0 +1,13 @@
+-----------------------------------------
+Receipt ID : RCP-0001
+Customer   : Areeba Akbar
+Timestamp  : 2026-04-26 01:38:11
+Items:
+  s26 ultra x5  @  Rs.700000  =  Rs.3.5e+06
+Subtotal        : Rs.3.5e+06
+Tax             : Rs.595000
+Item Discounts  : Rs.175000
+Coupon Discount : Rs.0
+Grand Total     : Rs.3.92e+06
+-----------------------------------------
+

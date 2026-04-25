@@ -63,16 +63,16 @@ DIST          =  ../../GUI.h \
 		../../Report.h \
 		../../StockManager.h ../../main.cpp
 QMAKE_TARGET  = CartManagementSystem
-DESTDIR        = release/ #avoid trailing-slash linebreak
+DESTDIR        = ../../../CartManagementSystem/ #avoid trailing-slash linebreak
 TARGET         = CartManagementSystem.exe
-DESTDIR_TARGET = release/CartManagementSystem.exe
+DESTDIR_TARGET = ../../../CartManagementSystem/CartManagementSystem.exe
 
 ####### Build rules
 
 first: all
-all: Makefile.Release  release/CartManagementSystem.exe
+all: Makefile.Release  ../../../CartManagementSystem/CartManagementSystem.exe
 
-release/CartManagementSystem.exe: C:/Qt/6.11.0/mingw_64/lib/libQt6Widgets.a C:/Qt/6.11.0/mingw_64/lib/libQt6Gui.a C:/Qt/6.11.0/mingw_64/lib/libQt6Core.a C:/Qt/6.11.0/mingw_64/lib/libQt6EntryPoint.a $(OBJECTS) 
+../../../CartManagementSystem/CartManagementSystem.exe: C:/Qt/6.11.0/mingw_64/lib/libQt6Widgets.a C:/Qt/6.11.0/mingw_64/lib/libQt6Gui.a C:/Qt/6.11.0/mingw_64/lib/libQt6Core.a C:/Qt/6.11.0/mingw_64/lib/libQt6EntryPoint.a $(OBJECTS) 
 	$(LINKER) $(LFLAGS) -o $(DESTDIR_TARGET) $(OBJECTS) $(LIBS)
 
 qmake: FORCE
@@ -570,6 +570,17 @@ release/main.o: ../../main.cpp C:/Qt/6.11.0/mingw_64/include/QtWidgets/QApplicat
 		C:/Qt/6.11.0/mingw_64/include/QtGui/qinputmethod.h \
 		C:/Qt/6.11.0/mingw_64/include/QtCore/qlocale.h \
 		C:/Qt/6.11.0/mingw_64/include/QtGui/qguiapplication_platform.h \
+		C:/Qt/6.11.0/mingw_64/include/QtCore/QDir \
+		C:/Qt/6.11.0/mingw_64/include/QtCore/qdir.h \
+		C:/Qt/6.11.0/mingw_64/include/QtCore/qdirlisting.h \
+		C:/Qt/6.11.0/mingw_64/include/QtCore/qfiledevice.h \
+		C:/Qt/6.11.0/mingw_64/include/QtCore/qiodevice.h \
+		C:/Qt/6.11.0/mingw_64/include/QtCore/qdatetime.h \
+		C:/Qt/6.11.0/mingw_64/include/QtCore/qcalendar.h \
+		C:/Qt/6.11.0/mingw_64/include/QtCore/qfile.h \
+		C:/Qt/6.11.0/mingw_64/include/QtCore/qfileinfo.h \
+		C:/Qt/6.11.0/mingw_64/include/QtCore/qtimezone.h \
+		C:/Qt/6.11.0/mingw_64/include/QtCore/QCoreApplication \
 		C:/Qt/6.11.0/mingw_64/include/QtWidgets/QMessageBox \
 		C:/Qt/6.11.0/mingw_64/include/QtWidgets/qmessagebox.h \
 		C:/Qt/6.11.0/mingw_64/include/QtWidgets/qdialog.h \
@@ -586,7 +597,6 @@ release/main.o: ../../main.cpp C:/Qt/6.11.0/mingw_64/include/QtWidgets/QApplicat
 		C:/Qt/6.11.0/mingw_64/include/QtGui/qfontvariableaxis.h \
 		C:/Qt/6.11.0/mingw_64/include/QtWidgets/qsizepolicy.h \
 		C:/Qt/6.11.0/mingw_64/include/QtGui/qevent.h \
-		C:/Qt/6.11.0/mingw_64/include/QtCore/qiodevice.h \
 		C:/Qt/6.11.0/mingw_64/include/QtCore/qurl.h \
 		C:/Qt/6.11.0/mingw_64/include/QtGui/qeventpoint.h \
 		C:/Qt/6.11.0/mingw_64/include/QtGui/qvector2d.h \

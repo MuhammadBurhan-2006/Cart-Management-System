@@ -1,11 +1,11 @@
-#ifndef FILEMANAGER_H
+ï»¿#ifndef FILEMANAGER_H
 #define FILEMANAGER_H
 
 // ============================================================
-//  FileManager.h  —  Abdul Rehman (25L-2074)
+//  FileManager.h  ï¿½  Abdul Rehman (25L-2074)
 //  Handles ALL file I/O for the Supermarket Billing System.
 //
-//  OPTIONAL INCLUDE — main.cpp works WITHOUT this file.
+//  OPTIONAL INCLUDE ï¿½ main.cpp works WITHOUT this file.
 //  Add #include "FileManager.h" only when you want persistence.
 //
 //  Depends on: Globals.h, Products.h, Customer.h
@@ -28,7 +28,7 @@ class FileManager {
 public:
 
     // ============================================================
-    //  SECTION 1 — PRODUCT FILE  (data/products.txt)
+    //  SECTION 1 ï¿½ PRODUCT FILE  (data/products.txt)
     //
     //  File format (one product per line):
     //      P|id|name|price|qty|expiryDate
@@ -43,7 +43,7 @@ public:
         ifstream fin(FILE_PRODUCTS);
         if (!fin.is_open()) {
             cout << "[FileManager] Warning: Cannot open " << FILE_PRODUCTS
-                << " — starting with empty product list." << endl;
+                << " ï¿½ starting with empty product list." << endl;
             return 0;
         }
         int count = 0;
@@ -136,7 +136,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 2 — CUSTOMER FILE  (data/customers.txt)
+    //  SECTION 2 ï¿½ CUSTOMER FILE  (data/customers.txt)
     //
     //  File format:
     //      id|name|username|password|phone
@@ -147,7 +147,7 @@ public:
         ifstream fin(FILE_CUSTOMERS);
         if (!fin.is_open()) {
             cout << "[FileManager] Warning: Cannot open " << FILE_CUSTOMERS
-                << " — no existing customers." << endl;
+                << " ï¿½ no existing customers." << endl;
             return 0;
         }
         int    count = 0;
@@ -170,7 +170,7 @@ public:
 
     // Appends one new customer to the file.
     // Called from: registration screen.
-    // NOTE: Customer::password is private — add getPassword() to Customer if needed.
+    // NOTE: Customer::password is private ï¿½ add getPassword() to Customer if needed.
     //       For now we write a placeholder; replace with c.getPassword() once getter exists.
     static void saveNewCustomer(const Customer& c, const string& password) {
         ofstream fout(FILE_CUSTOMERS, ios::app);
@@ -197,7 +197,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 3 — ADMIN LOGIN  (data/admins.txt)
+    //  SECTION 3 ï¿½ ADMIN LOGIN  (data/admins.txt)
     //
     //  File format:
     //      id|name|username|password
@@ -219,7 +219,7 @@ public:
             if (line.empty()) continue;
             stringstream ss(line);
             string tok, name, user, pass;
-            getline(ss, tok, '|'); // id — unused here
+            getline(ss, tok, '|'); // id ï¿½ unused here
             getline(ss, name, '|');
             getline(ss, user, '|');
             getline(ss, pass, '|');
@@ -234,7 +234,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 4 — SALES LOG  (data/sales_log.txt)
+    //  SECTION 4 ï¿½ SALES LOG  (data/sales_log.txt)
     //  Appends one transaction block per checkout.
     // ============================================================
 
@@ -278,7 +278,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 5 — RECEIPT FILE  (data/receipts/RCP-XXXX.txt)
+    //  SECTION 5 ï¿½ RECEIPT FILE  (data/receipts/RCP-XXXX.txt)
     //  One .txt file per transaction.
     // ============================================================
 
@@ -328,7 +328,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 6 — REFUND LOG  (data/refunds.txt)
+    //  SECTION 6 ï¿½ REFUND LOG  (data/refunds.txt)
     // ============================================================
 
     static void appendRefundLog(const string& originalReceiptID,
@@ -355,7 +355,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 7 — SALES REPORT  (data/reports/RPT-XXXX.txt)
+    //  SECTION 7 ï¿½ SALES REPORT  (data/reports/RPT-XXXX.txt)
     //  Reads sales_log.txt and writes a summary.
     // ============================================================
 
@@ -402,7 +402,7 @@ public:
 
 
     // ============================================================
-    //  SECTION 8 — UTILITY HELPERS
+    //  SECTION 8 ï¿½ UTILITY HELPERS
     // ============================================================
 
     // Generate receipt ID like "RCP-0042"
@@ -428,6 +428,19 @@ public:
         system("if not exist data\\reports  mkdir data\\reports");
         cout << "[FileManager] Data folders ready." << endl;
     }
-};
 
+    // Counts existing receipts in sales log to generate non-duplicate receipt IDs
+    static int getNextReceiptCounter() {
+        ifstream fin(FILE_SALES_LOG);
+        if (!fin.is_open()) return 1;
+        int count = 0;
+        string line;
+        while (getline(fin, line)) {
+            if (line.find("Receipt ID") != string::npos)
+                count++;
+        }
+        fin.close();
+        return count + 1;
+    }
+};
 #endif // FILEMANAGER_H

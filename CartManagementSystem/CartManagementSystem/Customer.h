@@ -270,9 +270,9 @@ public:
             couponApplied = true;
             cout << "Coupon applied: Flat Rs.50 off!" << endl;
         }
-        else if (code == COUPON_3_CODE) {// "FRESH20" ? 20% off
+        else if (code == COUPON_3_CODE) {// "FRESH20" → 20% off
             couponCode = code;
-            couponDiscount = subtotal * COUPON_3_DISC;
+            couponDiscount = currentSubtotal * COUPON_3_DISC;  // FIX: was using subtotal(=0), now uses currentSubtotal
             couponApplied = true;
             cout << "Coupon applied: 20% off!" << endl;
         }

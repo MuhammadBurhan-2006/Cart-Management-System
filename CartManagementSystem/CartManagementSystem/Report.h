@@ -109,10 +109,7 @@ private:
 			}
 		}
 
-		if (result < 0.0)
-			return -result; //Less Than 0 So Return Neg
-		else
-			return result;
+		return negative ? -result : result;
 	}
 
 
@@ -132,10 +129,7 @@ private:
 			result = result * 10 + (str[i] - '0');
 		}
 
-		if (result < 0)
-			return -result; //Less Than 0 So Return Neg
-		else
-			return result;
+		return negative ? -result : result;
 	}
 
 	// Extracts Product Name From an Item Line in Sales Log

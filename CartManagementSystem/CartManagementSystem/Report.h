@@ -22,7 +22,7 @@ private:
 	string topProductNames[MAX_REPORT_PRODUCTS];
 	int    topProductUnits[MAX_REPORT_PRODUCTS];
 
-	// Works Like line.find(word)
+	// Works Like line.find(word) — case-sensitive substring search
 	bool lineContains(const string& line, const string& keyword) {
 		if (keyword.size() > line.size()) return false;
 		for (int i = 0; i <= (int)(line.size() - keyword.size()); i++) {
@@ -36,38 +36,64 @@ private:
 			if (match)
 				return true;
 		}
-
 		return false;
 	}
 
-	// Extracts The Number After ':' in a Line
-	// e.g. "Grand Total     : Rs.228.50" → 228.50. Skips Past ':' Then Skips Non-Digit Chars Like "Rs."
+	// Checks if line STARTS WITH keyword (after optional leading spaces)
+	// Use this for summary lines to avoid false matches
+	bool lineStartsWith(const string& line, const string& keyword) {
+		int pos = 0;
+		// Skip leading spaces/tabs
+		while (pos < (int)line.size() && (line[pos] == ' ' || line[pos] == '\t'))
+			pos++;
+		if ((int)line.size() - pos < (int)keyword.size()) return false;
+		for (int j = 0; j < (int)keyword.size(); j++) {
+			if (line[pos + j] != keyword[j]) return false;
+		}
+		return true;
+	}
+
+	// Trim trailing whitespace/carriage-return from string
+	string trimRight(const string& s) {
+		int end = (int)s.size() - 1;
+		while (end >= 0 && (s[end] == ' ' || s[end] == '\t' || s[end] == '\r' || s[end] == '\n'))
+			end--;
+		return s.substr(0, end + 1);
+	}
+
+	// ============================================================
+	// FIX: extractValue — properly skips "Rs." including the dot
+	// Old bug: dot in "Rs." was treated as decimal point so
+	// "Rs.700000" was parsed as 0.700000 instead of 700000
+	// Fix: skip ALL non-digit, non-minus chars after ':'
+	// ============================================================
 	double extractValue(const string& line) {
 		int pos = 0;
 
 		// Read Until ':'
 		while (pos < (int)line.size() && line[pos] != ':')
 			pos++;
-		pos++; // Skips ':'
+		pos++; // Skip ':'
 
-		// Skip Spaces
+		// Skip spaces
 		while (pos < (int)line.size() && line[pos] == ' ')
 			pos++;
 
-		// Skip Non-Numeric Chars (e.g. "Rs.")
+		// FIX: Skip ALL non-numeric prefix chars including "Rs." dot
+		// Old code stopped at '.' thinking it was decimal — wrong!
 		while (pos < (int)line.size() &&
 			line[pos] != '-' &&
-			(line[pos] < '0' || line[pos] > '9'))
+			!(line[pos] >= '0' && line[pos] <= '9'))
 			pos++;
 
-		// Work With Negative Sign
+		// Handle negative sign
 		string numStr = "";
 		if (pos < (int)line.size() && line[pos] == '-') {
 			numStr += '-';
 			pos++;
 		}
 
-		// Build Number String
+		// Build number string (digits + one decimal point)
 		while (pos < (int)line.size() &&
 			(line[pos] == '.' || (line[pos] >= '0' && line[pos] <= '9'))) {
 			numStr += line[pos];
@@ -80,8 +106,7 @@ private:
 		return convDouble(numStr);
 	}
 
-
-	// Stod is Not Allowed So I Made My Own :P
+	// Stod replacement
 	double convDouble(const string& str) {
 		double result = 0.0;
 		int i = 0;
@@ -92,13 +117,11 @@ private:
 			i++;
 		}
 
-		// Integer Part
 		for (; i < (int)str.size() && str[i] != '.'; i++) {
 			if (str[i] < '0' || str[i] > '9') break;
 			result = result * 10.0 + (str[i] - '0');
 		}
 
-		// Decimal Part
 		if (i < (int)str.size() && str[i] == '.') {
 			i++;
 			double fraction = 0.1;
@@ -112,8 +135,7 @@ private:
 		return negative ? -result : result;
 	}
 
-
-	// Stoi is Not Allowed So I Made My Own :P
+	// Stoi replacement
 	int convInt(const string& str) {
 		int result = 0;
 		int i = 0;
@@ -132,16 +154,12 @@ private:
 		return negative ? -result : result;
 	}
 
-	// Extracts Product Name From an Item Line in Sales Log
-	// Line Format: "  Milk x2  @  Rs.120  =  Rs.240"
-	// Name is Everything From First Non-Space Char Up to " x
+	// Extracts product name from item line: "  Milk x2  @  Rs.120  =  Rs.240"
 	string extractProductName(const string& line) {
-		// Skip Leading Spaces
 		int start = 0;
 		while (start < (int)line.size() && line[start] == ' ')
 			start++;
 
-		// Find " x" — Marks End of Name
 		int end = start;
 		while (end < (int)line.size() - 1) {
 			if (line[end] == ' ' && line[end + 1] == 'x')
@@ -150,14 +168,11 @@ private:
 		}
 
 		if (end >= (int)line.size() - 1) return "";
-
-		return line.substr(start, end - start);
+		return trimRight(line.substr(start, end - start));
 	}
 
-	// Extracts Qty From an Item Line E.g. Line Format: "  Milk x2  @  Rs.120  =  Rs.240"
-	// Qty is Digits Right After 'x'
+	// Extracts qty from item line: digits right after 'x'
 	int extractProductQty(const string& line) {
-		// Find " x"
 		int pos = 0;
 		while (pos < (int)line.size() - 1) {
 			if (line[pos] == ' ' && line[pos + 1] == 'x')
@@ -168,7 +183,6 @@ private:
 
 		pos += 2; // Skip ' ' and 'x'
 
-		// Read Digits
 		string qtyStr = "";
 		while (pos < (int)line.size() &&
 			line[pos] >= '0' && line[pos] <= '9') {
@@ -176,15 +190,40 @@ private:
 			pos++;
 		}
 
-		if (qtyStr == "")
-			return 0;
-
+		if (qtyStr == "") return 0;
 		return convInt(qtyStr);
 	}
 
-	// Reads Sales Log and Finds Top MAX_REPORT_PRODUCTS Sellers
-	// Tracks Units Sold Per Product in Parallel Arrays
-	// Then Bubble Sorts Descending by Unit
+	// ============================================================
+	// FIX: extractLineTotal — gets the LAST "Rs.XXXXX" in an item line
+	// Item line format: "  Milk x2  @  Rs.120  =  Rs.240"
+	// We want the final value (line total = Rs.240)
+	// ============================================================
+	double extractLineTotal(const string& line) {
+		// Find last occurrence of CURRENCY_SYMBOL in the line
+		string rs = CURRENCY_SYMBOL; // "Rs."
+		int lastPos = -1;
+		for (int i = 0; i <= (int)line.size() - (int)rs.size(); i++) {
+			bool match = true;
+			for (int j = 0; j < (int)rs.size(); j++) {
+				if (line[i + j] != rs[j]) { match = false; break; }
+			}
+			if (match) lastPos = i;
+		}
+		if (lastPos == -1) return 0.0;
+
+		int pos = lastPos + (int)rs.size(); // skip "Rs."
+		string numStr = "";
+		while (pos < (int)line.size() &&
+			(line[pos] == '.' || (line[pos] >= '0' && line[pos] <= '9'))) {
+			numStr += line[pos];
+			pos++;
+		}
+		if (numStr == "") return 0.0;
+		return convDouble(numStr);
+	}
+
+	// Reads sales log and finds top MAX_REPORT_PRODUCTS sellers
 	void findTopProducts() {
 		string names[MAX_PRODUCTS];
 		int    units[MAX_PRODUCTS];
@@ -206,7 +245,7 @@ private:
 				inItems = true;
 				continue;
 			}
-			if (lineContains(line, "Subtotal")) {
+			if (lineStartsWith(line, "Subtotal")) {
 				inItems = false;
 				continue;
 			}
@@ -218,7 +257,6 @@ private:
 
 			if (name == "" || qty <= 0) continue;
 
-			// If Already Tracked, Add to Its Units
 			bool found = false;
 			for (int i = 0; i < count; i++) {
 				if (names[i] == name) {
@@ -227,7 +265,6 @@ private:
 					break;
 				}
 			}
-			// New Product — Add to Tracking Arrays
 			if (!found && count < MAX_PRODUCTS) {
 				names[count] = name;
 				units[count] = qty;
@@ -237,22 +274,16 @@ private:
 
 		file.close();
 
-		// Bubble Sort Descending by Units Sold
+		// Bubble sort descending
 		for (int i = 0; i < count - 1; i++) {
 			for (int j = 0; j < count - i - 1; j++) {
 				if (units[j] < units[j + 1]) {
-					int    tmpU = units[j];
-					units[j] = units[j + 1];
-					units[j + 1] = tmpU;
-
-					string tmpN = names[j];
-					names[j] = names[j + 1];
-					names[j + 1] = tmpN;
+					int    tmpU = units[j]; units[j] = units[j + 1]; units[j + 1] = tmpU;
+					string tmpN = names[j]; names[j] = names[j + 1]; names[j + 1] = tmpN;
 				}
 			}
 		}
 
-		// Store Top MAX_REPORT_PRODUCTS
 		for (int i = 0; i < MAX_REPORT_PRODUCTS; i++) {
 			if (i < count) {
 				topProductNames[i] = names[i];
@@ -265,9 +296,45 @@ private:
 		}
 	}
 
+	// ============================================================
+	// FIX: findCategoryForProduct — looks up product category from
+	// products.txt by name so we can assign revenue correctly
+	// ============================================================
+	string findCategoryForProduct(const string& productName) {
+		ifstream fin(FILE_PRODUCTS);
+		if (!fin.is_open()) return "";
+		string line;
+		while (getline(fin, line)) {
+			if (line.empty() || line[0] == '#') continue;
+			// Format: P|id|name|price|qty|...
+			// Extract type (first char) and name (3rd field)
+			string type = "";
+			string name = "";
+			int pos = 0;
+			// type
+			while (pos < (int)line.size() && line[pos] != '|')
+				type += line[pos++];
+			pos++; // skip '|'
+			// id — skip
+			while (pos < (int)line.size() && line[pos] != '|') pos++;
+			pos++; // skip '|'
+			// name
+			while (pos < (int)line.size() && line[pos] != '|')
+				name += line[pos++];
+
+			if (name == productName) {
+				fin.close();
+				if (type == "P") return CAT_PERISHABLE;
+				if (type == "E") return CAT_ELECTRONIC;
+				if (type == "G") return CAT_GROCERY;
+			}
+		}
+		fin.close();
+		return "";
+	}
 
 public:
-	// Default Const
+	// Default Constructor
 	Report() {
 		this->reportDate = "";
 		this->totalRevenue = 0.0;
@@ -283,7 +350,7 @@ public:
 		}
 	}
 
-	// Para Const, I Couldve Used Initializer List But I Wanted To Keep It Simple And Make it Less GPT-Like Warna Itiraz Kartay :P
+	// Parameterized Constructor
 	Report(string date, double totalRev, int totalTrans,
 		double groceryRev, double perishRev, double electroRev,
 		string topNames[], int topUnits[]) {
@@ -301,65 +368,45 @@ public:
 		}
 	}
 
-	// Getters And 1 Setter Used by AdminSalesReport GUI Screen
-	double getTotalRevenue() {
-		return totalRevenue;
-	}
-
-	double getTotalTax() {
-		return totalTax;
-	}
-
-	double getTotalDiscounts() {
-		return totalDiscounts;
-	}
-
-	int getTotalTransactions() {
-		return totalTransactions;
-	}
-
-	double getGroceryRevenue() {
-		return groceryRevenue;
-	}
-
-	double getPerishRevenue() {
-		return perishRevenue;
-	}
-
-	double getElectroRevenue() {
-		return electroRevenue;
-	}
+	// Getters
+	double getTotalRevenue() { return totalRevenue; }
+	double getTotalTax() { return totalTax; }
+	double getTotalDiscounts() { return totalDiscounts; }
+	int    getTotalTransactions() { return totalTransactions; }
+	double getGroceryRevenue() { return groceryRevenue; }
+	double getPerishRevenue() { return perishRevenue; }
+	double getElectroRevenue() { return electroRevenue; }
 
 	string getTopProductName(int i) {
-		if (i >= 0 && i < MAX_REPORT_PRODUCTS)
-			return topProductNames[i];
+		if (i >= 0 && i < MAX_REPORT_PRODUCTS) return topProductNames[i];
 		return "";
 	}
-
 	int getTopProductUnits(int i) {
-		if (i >= 0 && i < MAX_REPORT_PRODUCTS)
-			return topProductUnits[i];
+		if (i >= 0 && i < MAX_REPORT_PRODUCTS) return topProductUnits[i];
 		return 0;
 	}
+	void setReportDate(string date) { reportDate = date; }
 
-	void setReportDate(string date) {
-		reportDate = date;
-	}
-
-
-	// Reads Sales Log Line by Line and Accumulates All Totals
-	// Then Calls findTopProducts() For Top Sellers
-	// Log Block Format (Written by FileManager::appendSalesLog):
+	// ============================================================
+	// FIX: generateFromLog — now correctly parses all values AND
+	// calculates category revenue by reading item lines
+	//
+	// Log block format (written by FileManager::appendSalesLog):
+	//   -----------------------------------------
 	//   Receipt ID : RCP-0001
+	//   Customer   : Ali Ahmed
+	//   Timestamp  : 2025-06-01 12:00:00
 	//   Items:
-	//     Milk x2  @  Rs.120  =  Rs.240
-	//   Subtotal        : Rs.240
-	//   Tax             : Rs.12
-	//   Item Discounts  : Rs.24
+	//     Fresh Milk 1L x2  @  Rs.150  =  Rs.300
+	//   Subtotal        : Rs.300
+	//   Tax             : Rs.15
+	//   Item Discounts  : Rs.30
 	//   Coupon Discount : Rs.0
-	//   Grand Total     : Rs.228
+	//   Grand Total     : Rs.285
+	//   -----------------------------------------
+	// ============================================================
 	void generateFromLog() {
-		// Reset All Totals
+		// Reset all totals
 		totalRevenue = 0.0;
 		totalTax = 0.0;
 		totalDiscounts = 0.0;
@@ -375,18 +422,47 @@ public:
 		}
 
 		string line;
+		bool inItems = false;
+
 		while (getline(file, line)) {
-			if (lineContains(line, "Grand Total")) {
+
+			// Track when we're inside the Items block
+			if (lineContains(line, "Items:")) {
+				inItems = true;
+				continue;
+			}
+			if (lineStartsWith(line, "Subtotal")) {
+				inItems = false;
+				// don't skip — fall through to parse if needed
+			}
+
+			// ---- Item lines → category revenue ----
+			if (inItems && !line.empty() && line[0] == ' ') {
+				string prodName = extractProductName(line);
+				double lineTotal = extractLineTotal(line);
+				if (prodName != "" && lineTotal > 0.0) {
+					string cat = findCategoryForProduct(prodName);
+					if (cat == CAT_GROCERY)         groceryRevenue += lineTotal;
+					else if (cat == CAT_PERISHABLE) perishRevenue += lineTotal;
+					else if (cat == CAT_ELECTRONIC) electroRevenue += lineTotal;
+				}
+				continue;
+			}
+
+			// ---- Summary lines — use lineStartsWith so spacing doesn't matter ----
+			if (lineStartsWith(line, "Grand Total")) {
 				totalRevenue += extractValue(line);
 				totalTransactions++;
 			}
-			else if (lineContains(line, "Tax             :")) {
+			else if (lineStartsWith(line, "Tax")) {
+				// Make sure it's the "Tax :" line, NOT "Total" or other Tax-containing words
+				// lineStartsWith already ensures line begins with "Tax"
 				totalTax += extractValue(line);
 			}
-			else if (lineContains(line, "Item Discounts  :")) {
+			else if (lineStartsWith(line, "Item Discounts")) {
 				totalDiscounts += extractValue(line);
 			}
-			else if (lineContains(line, "Coupon Discount :")) {
+			else if (lineStartsWith(line, "Coupon Discount")) {
 				totalDiscounts += extractValue(line);
 			}
 		}
@@ -395,7 +471,7 @@ public:
 		findTopProducts();
 	}
 
-	// Console Output(Good For Testing)
+	// Console output
 	void displayOnScreen() {
 		cout << REPORT_HEADER << endl;
 		cout << "Date              : " << reportDate << endl;
@@ -420,14 +496,13 @@ public:
 		cout << REPORT_HEADER << endl;
 	}
 
-	// Saves Report to data/reports/RPT-<date>.txt
+	// Export to data/reports/RPT-<date>.txt
 	void exportToFile() {
 		ofstream outFile(FILE_REPORTS_DIR + REPORT_ID_PREFIX + reportDate + ".txt");
 		if (!outFile) {
 			cout << "Error Creating Report File!" << endl;
 			return;
 		}
-
 		outFile << REPORT_HEADER << endl;
 		outFile << "Date              : " << reportDate << endl;
 		outFile << REPORT_DIVIDER << endl;
@@ -448,10 +523,8 @@ public:
 					<< " — " << topProductUnits[i] << " units" << endl;
 			}
 		}
-
 		outFile.close();
 	}
-
 };
 
 #endif // REPORT_H

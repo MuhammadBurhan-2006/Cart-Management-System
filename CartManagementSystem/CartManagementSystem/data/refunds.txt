@@ -1,0 +1,8 @@
+-----------------------------------------
+Original Receipt : RCP-0001
+Customer         : (Customer Portal)
+Timestamp        : 2026-04-26 14:10:34
+Restocking Fee   : Rs.431200
+Refund Amount    : Rs.8.1928e+06
+-----------------------------------------
+

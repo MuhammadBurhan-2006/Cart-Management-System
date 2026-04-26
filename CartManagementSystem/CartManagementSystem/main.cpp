@@ -1,11 +1,14 @@
 ﻿// ============================================================
 //  main.cpp  —  Team 03 | CS1004 OOP | FAST-NUCES
+//  FIX 1: Single window using QStackedWidget (no more popups)
+//  FIX 2: Refund screen properly wired in
 // ============================================================
 
 #include <QApplication>
-#include <QDir>                   // ✅ FIX: Working directory set karne ke liye
-#include <QCoreApplication>       // ✅ FIX: applicationDirPath() ke liye
+#include <QDir>
+#include <QCoreApplication>
 #include <QMessageBox>
+#include <QStackedWidget>
 #include "Globals.h"
 #include "Products.h"
 #include "Customer.h"
@@ -20,91 +23,129 @@ int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
     app.setFont(QFont("Arial", 12));
 
-    // ✅ FIX: Working directory ko executable ki location pe set karo
-    // Chahe koi bhi PC pe run kare, data/ folder wahan se dhundega
-    // jahan .exe bana hai — jo DESTDIR = $$PWD ki wajah se project folder hoga
+    // Working directory fix
     QDir::setCurrent(QCoreApplication::applicationDirPath());
 
     // ---- Step 1: Create data folders ----
     FileManager::initDataFolders();
 
-    // ---- Step 2: Create screens ----
-    LoginScreen* loginScreen = new LoginScreen();
-    ProductCatalogScreen* catalogScreen = new ProductCatalogScreen();
-    RegisterScreen* registerScreen = new RegisterScreen();
-    CustomerScreen* customerScreen = new CustomerScreen();
+    // ============================================================
+    // SINGLE WINDOW — sab screens ek QStackedWidget mein
+    // Index map:
+    //   0 = LoginScreen
+    //   1 = AdminDashboardScreen
+    //   2 = ProductCatalogScreen
+    //   3 = AdminStockScreen
+    //   4 = AdminReportScreen
+    //   5 = RegisterScreen
+    //   6 = CustomerScreen
+    //   7 = RefundScreen
+    // ============================================================
+    QStackedWidget* mainWindow = new QStackedWidget();
+    mainWindow->setWindowTitle("Supermarket Billing System");
+    mainWindow->setMinimumSize(900, 660);
 
-    // ---- Step 3: Load products into Admin catalog ----
+    LoginScreen* loginScreen = new LoginScreen();
+    AdminDashboardScreen* dashScreen = new AdminDashboardScreen();
+    ProductCatalogScreen* catalogScreen = new ProductCatalogScreen();
+    AdminStockScreen* stockScreen = new AdminStockScreen();
+    AdminReportScreen* reportScreen = new AdminReportScreen();
+    RegisterScreen* regScreen = new RegisterScreen();
+    CustomerScreen* custScreen = new CustomerScreen();
+    RefundScreen* refundScreen = new RefundScreen();
+
+    mainWindow->addWidget(loginScreen);   // 0
+    mainWindow->addWidget(dashScreen);    // 1
+    mainWindow->addWidget(catalogScreen); // 2
+    mainWindow->addWidget(stockScreen);   // 3
+    mainWindow->addWidget(reportScreen);  // 4
+    mainWindow->addWidget(regScreen);     // 5
+    mainWindow->addWidget(custScreen);    // 6
+    mainWindow->addWidget(refundScreen);  // 7
+
+    // Helper lambda — switch page
+    auto goTo = [&](int idx) {
+        mainWindow->setCurrentIndex(idx);
+        };
+
+    // ---- Load products into catalog ----
     Product* loadedProducts[MAX_PRODUCTS];
     int loadedCount = FileManager::loadProducts(loadedProducts, MAX_PRODUCTS);
     if (loadedCount > 0)
         catalogScreen->loadProducts(loadedProducts, loadedCount);
 
-    // ---- Step 4: Admin login ----
+    // ============================================================
+    //  LOGIN
+    // ============================================================
     QObject::connect(loginScreen, &LoginScreen::adminLoginRequested,
         [&](QString user, QString pass) {
             if (FileManager::validateAdminLogin(user.toStdString(), pass.toStdString())) {
-                loginScreen->hide();
-                catalogScreen->show();
+                dashScreen->refresh();
+                goTo(1);
             }
             else {
-                QMessageBox::critical(loginScreen, "Login Failed",
+                QMessageBox::critical(mainWindow, "Login Failed",
                     "Invalid admin username or password.");
             }
         });
 
-    // ---- Step 5: Customer login ----
     QObject::connect(loginScreen, &LoginScreen::customerLoginRequested,
         [&](QString user, QString pass) {
             Customer customers[MAX_CUSTOMERS];
             int count = FileManager::loadCustomers(customers, MAX_CUSTOMERS);
             int idx = FileManager::validateCustomerLogin(
-                customers, count,
-                user.toStdString(), pass.toStdString());
+                customers, count, user.toStdString(), pass.toStdString());
             if (idx >= 0) {
-                // Load fresh products into customer screen
                 Product* prods[MAX_PRODUCTS];
                 int pcount = FileManager::loadProducts(prods, MAX_PRODUCTS);
-                customerScreen->loadProducts(prods, pcount);
-                customerScreen->setCustomer(customers[idx]);
-                loginScreen->hide();
-                customerScreen->show();
+                custScreen->loadProducts(prods, pcount);
+                custScreen->setCustomer(customers[idx]);
+                goTo(6);
             }
             else {
-                QMessageBox::critical(loginScreen, "Login Failed",
+                QMessageBox::critical(mainWindow, "Login Failed",
                     "Invalid customer username or password.");
             }
         });
 
-    // ---- Step 6: Login → Register ----
     QObject::connect(loginScreen, &LoginScreen::registerRequested,
+        [&]() { goTo(5); });
+
+    // ============================================================
+    //  REGISTER
+    // ============================================================
+    QObject::connect(regScreen, &RegisterScreen::backToLogin,
+        [&]() { goTo(0); });
+
+    QObject::connect(regScreen, &RegisterScreen::registrationDone,
+        [&](QString) { goTo(0); });
+
+    // ============================================================
+    //  ADMIN DASHBOARD
+    // ============================================================
+    QObject::connect(dashScreen, &AdminDashboardScreen::goToProducts,
         [&]() {
-            loginScreen->hide();
-            registerScreen->show();
+            Product* all[MAX_PRODUCTS];
+            int count = FileManager::loadProducts(all, MAX_PRODUCTS);
+            catalogScreen->loadProducts(all, count);
+            goTo(2);
         });
 
-    // ---- Step 7: Register → back to Login ----
-    QObject::connect(registerScreen, &RegisterScreen::backToLogin,
-        [&]() {
-            registerScreen->hide();
-            loginScreen->show();
-        });
+    QObject::connect(dashScreen, &AdminDashboardScreen::goToStock,
+        [&]() { stockScreen->refresh(); goTo(3); });
 
-    // ---- Step 8: Registration done → back to Login ----
-    QObject::connect(registerScreen, &RegisterScreen::registrationDone,
-        [&](QString) {
-            registerScreen->hide();
-            loginScreen->show();
-        });
+    QObject::connect(dashScreen, &AdminDashboardScreen::goToReport,
+        [&]() { reportScreen->refresh(); goTo(4); });
 
-    // ---- Step 9: Customer logout ----
-    QObject::connect(customerScreen, &CustomerScreen::logoutRequested,
-        [&]() {
-            customerScreen->hide();
-            loginScreen->show();
-        });
+    QObject::connect(dashScreen, &AdminDashboardScreen::logoutRequested,
+        [&]() { goTo(0); });
 
-    // ---- Step 10: Admin — Save product when added ----
+    // ============================================================
+    //  PRODUCT CATALOG
+    // ============================================================
+    QObject::connect(catalogScreen, &ProductCatalogScreen::goToDashboard,
+        [&]() { dashScreen->refresh(); goTo(1); });
+
     QObject::connect(catalogScreen, &ProductCatalogScreen::productAdded,
         [&](Product* p) {
             Product* all[MAX_PRODUCTS];
@@ -113,7 +154,13 @@ int main(int argc, char* argv[]) {
             FileManager::saveProducts(all, count);
         });
 
-    // ---- Step 11: Admin — Save on delete ----
+    QObject::connect(catalogScreen, &ProductCatalogScreen::productUpdated,
+        [&](Product*) {
+            Product* all[MAX_PRODUCTS];
+            int count = FileManager::loadProducts(all, MAX_PRODUCTS);
+            FileManager::saveProducts(all, count);
+        });
+
     QObject::connect(catalogScreen, &ProductCatalogScreen::productDeleted,
         [&](int) {
             Product* all[MAX_PRODUCTS];
@@ -122,14 +169,37 @@ int main(int argc, char* argv[]) {
             for (int i = 0; i < count; i++) { delete all[i]; all[i] = nullptr; }
         });
 
-    // ---- Step 12: Admin logout ----
     QObject::connect(catalogScreen, &ProductCatalogScreen::logoutRequested,
-        [&]() {
-            catalogScreen->hide();
-            loginScreen->show();
-        });
+        [&]() { goTo(0); });
+
+    // ============================================================
+    //  STOCK SCREEN
+    // ============================================================
+    QObject::connect(stockScreen, &AdminStockScreen::goToDashboard,
+        [&]() { dashScreen->refresh(); goTo(1); });
+
+    // ============================================================
+    //  REPORT SCREEN
+    // ============================================================
+    QObject::connect(reportScreen, &AdminReportScreen::goToDashboard,
+        [&]() { dashScreen->refresh(); goTo(1); });
+
+    // ============================================================
+    //  CUSTOMER SCREEN
+    // ============================================================
+    QObject::connect(custScreen, &CustomerScreen::logoutRequested,
+        [&]() { goTo(0); });
+
+    QObject::connect(custScreen, &CustomerScreen::refundRequested,
+        [&]() { refundScreen->reset(); goTo(7); });
+
+    // ============================================================
+    //  REFUND SCREEN
+    // ============================================================
+    QObject::connect(refundScreen, &RefundScreen::backRequested,
+        [&]() { goTo(6); });
 
     // ---- Start ----
-    loginScreen->show();
+    mainWindow->show();
     return app.exec();
 }

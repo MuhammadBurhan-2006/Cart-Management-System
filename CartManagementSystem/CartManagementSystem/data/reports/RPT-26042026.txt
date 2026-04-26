@@ -1,0 +1,14 @@
+======= ADMIN SALES REPORT =======
+Date              : 26042026
+---------------------------------
+Total Transactions: 4
+Total Revenue     : Rs.23.52
+Tax Collected     : Rs.1.071e+06
+Total Discounts   : Rs.1.05e+06
+---------------------------------
+Grocery Revenue   : Rs.0
+Perishable Rev    : Rs.0
+Electronic Rev    : Rs.21
+---------------------------------
+Top Selling Products:
+  1. s26 ultra — 30 units

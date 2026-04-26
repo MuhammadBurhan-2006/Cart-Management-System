@@ -1,10 +1,11 @@
 ﻿// ============================================================
 //  main.cpp  —  Team 03 | CS1004 OOP | FAST-NUCES
+//  FIXED: AdminDashboard, StockScreen, ReportScreen connected
 // ============================================================
 
 #include <QApplication>
-#include <QDir>                   // ✅ FIX: Working directory set karne ke liye
-#include <QCoreApplication>       // ✅ FIX: applicationDirPath() ke liye
+#include <QDir>
+#include <QCoreApplication>
 #include <QMessageBox>
 #include "Globals.h"
 #include "Products.h"
@@ -20,17 +21,17 @@ int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
     app.setFont(QFont("Arial", 12));
 
-    // ✅ FIX: Working directory ko executable ki location pe set karo
-    // Chahe koi bhi PC pe run kare, data/ folder wahan se dhundega
-    // jahan .exe bana hai — jo DESTDIR = $$PWD ki wajah se project folder hoga
     QDir::setCurrent(QCoreApplication::applicationDirPath());
 
     // ---- Step 1: Create data folders ----
     FileManager::initDataFolders();
 
-    // ---- Step 2: Create screens ----
+    // ---- Step 2: Create ALL screens ----
     LoginScreen* loginScreen = new LoginScreen();
+    AdminDashboardScreen* dashScreen = new AdminDashboardScreen();
     ProductCatalogScreen* catalogScreen = new ProductCatalogScreen();
+    AdminStockScreen* stockScreen = new AdminStockScreen();
+    AdminReportScreen* reportScreen = new AdminReportScreen();
     RegisterScreen* registerScreen = new RegisterScreen();
     CustomerScreen* customerScreen = new CustomerScreen();
 
@@ -40,12 +41,13 @@ int main(int argc, char* argv[]) {
     if (loadedCount > 0)
         catalogScreen->loadProducts(loadedProducts, loadedCount);
 
-    // ---- Step 4: Admin login ----
+    // ---- Step 4: Admin login → show Dashboard ----
     QObject::connect(loginScreen, &LoginScreen::adminLoginRequested,
         [&](QString user, QString pass) {
             if (FileManager::validateAdminLogin(user.toStdString(), pass.toStdString())) {
                 loginScreen->hide();
-                catalogScreen->show();
+                dashScreen->refresh();
+                dashScreen->show();
             }
             else {
                 QMessageBox::critical(loginScreen, "Login Failed",
@@ -62,7 +64,6 @@ int main(int argc, char* argv[]) {
                 customers, count,
                 user.toStdString(), pass.toStdString());
             if (idx >= 0) {
-                // Load fresh products into customer screen
                 Product* prods[MAX_PRODUCTS];
                 int pcount = FileManager::loadProducts(prods, MAX_PRODUCTS);
                 customerScreen->loadProducts(prods, pcount);
@@ -104,7 +105,56 @@ int main(int argc, char* argv[]) {
             loginScreen->show();
         });
 
-    // ---- Step 10: Admin — Save product when added ----
+    // =========================================================
+    // DASHBOARD NAVIGATION
+    // =========================================================
+
+    // Dashboard → Product Catalog
+    QObject::connect(dashScreen, &AdminDashboardScreen::goToProducts,
+        [&]() {
+            Product* all[MAX_PRODUCTS];
+            int count = FileManager::loadProducts(all, MAX_PRODUCTS);
+            catalogScreen->loadProducts(all, count);
+            dashScreen->hide();
+            catalogScreen->show();
+        });
+
+    // Dashboard → Stock Management
+    QObject::connect(dashScreen, &AdminDashboardScreen::goToStock,
+        [&]() {
+            dashScreen->hide();
+            stockScreen->refresh();
+            stockScreen->show();
+        });
+
+    // Dashboard → Sales Report
+    QObject::connect(dashScreen, &AdminDashboardScreen::goToReport,
+        [&]() {
+            dashScreen->hide();
+            reportScreen->refresh();
+            reportScreen->show();
+        });
+
+    // Dashboard logout
+    QObject::connect(dashScreen, &AdminDashboardScreen::logoutRequested,
+        [&]() {
+            dashScreen->hide();
+            loginScreen->show();
+        });
+
+    // =========================================================
+    // PRODUCT CATALOG NAVIGATION
+    // =========================================================
+
+    // Catalog → Dashboard button
+    QObject::connect(catalogScreen, &ProductCatalogScreen::goToDashboard,
+        [&]() {
+            catalogScreen->hide();
+            dashScreen->refresh();
+            dashScreen->show();
+        });
+
+    // Catalog: product added → save
     QObject::connect(catalogScreen, &ProductCatalogScreen::productAdded,
         [&](Product* p) {
             Product* all[MAX_PRODUCTS];
@@ -113,7 +163,15 @@ int main(int argc, char* argv[]) {
             FileManager::saveProducts(all, count);
         });
 
-    // ---- Step 11: Admin — Save on delete ----
+    // Catalog: product updated → save
+    QObject::connect(catalogScreen, &ProductCatalogScreen::productUpdated,
+        [&](Product*) {
+            Product* all[MAX_PRODUCTS];
+            int count = FileManager::loadProducts(all, MAX_PRODUCTS);
+            FileManager::saveProducts(all, count);
+        });
+
+    // Catalog: product deleted → save
     QObject::connect(catalogScreen, &ProductCatalogScreen::productDeleted,
         [&](int) {
             Product* all[MAX_PRODUCTS];
@@ -122,11 +180,33 @@ int main(int argc, char* argv[]) {
             for (int i = 0; i < count; i++) { delete all[i]; all[i] = nullptr; }
         });
 
-    // ---- Step 12: Admin logout ----
+    // Catalog logout
     QObject::connect(catalogScreen, &ProductCatalogScreen::logoutRequested,
         [&]() {
             catalogScreen->hide();
             loginScreen->show();
+        });
+
+    // =========================================================
+    // STOCK SCREEN NAVIGATION
+    // =========================================================
+
+    QObject::connect(stockScreen, &AdminStockScreen::goToDashboard,
+        [&]() {
+            stockScreen->hide();
+            dashScreen->refresh();
+            dashScreen->show();
+        });
+
+    // =========================================================
+    // REPORT SCREEN NAVIGATION
+    // =========================================================
+
+    QObject::connect(reportScreen, &AdminReportScreen::goToDashboard,
+        [&]() {
+            reportScreen->hide();
+            dashScreen->refresh();
+            dashScreen->show();
         });
 
     // ---- Start ----

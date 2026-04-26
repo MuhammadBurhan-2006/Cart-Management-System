@@ -11,3 +11,29 @@ Coupon Discount : Rs.0
 Grand Total     : Rs.3.92e+06
 -----------------------------------------
 
+-----------------------------------------
+Receipt ID : RCP-0002
+Customer   : Areeba Akbar
+Timestamp  : 2026-04-26 01:47:51
+Items:
+  s26 ultra x1  @  Rs.700000  =  Rs.700000
+Subtotal        : Rs.700000
+Tax             : Rs.119000
+Item Discounts  : Rs.35000
+Coupon Discount : Rs.0
+Grand Total     : Rs.784000
+-----------------------------------------
+
+-----------------------------------------
+Receipt ID : RCP-0003
+Customer   : Areeba Akbar
+Timestamp  : 2026-04-26 01:55:18
+Items:
+  s26 ultra x1  @  Rs.700000  =  Rs.700000
+Subtotal        : Rs.700000
+Tax             : Rs.119000
+Item Discounts  : Rs.35000
+Coupon Discount : Rs.0
+Grand Total     : Rs.784000
+-----------------------------------------
+

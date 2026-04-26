@@ -111,7 +111,7 @@ private:
 		btnRow->addWidget(btnAdmin);
 		btnRow->addWidget(btnCustomer);
 
-		QLabel* lblFooter = new QLabel("© 2025 Team 03 — FAST NUCES | CS1004 OOP", this);
+		QLabel* lblFooter = new QLabel("Team 03", this);
 		lblFooter->setAlignment(Qt::AlignCenter);
 		lblFooter->setObjectName("lblFooter");
 
@@ -643,6 +643,7 @@ public:
 
 signals:
 	void logoutRequested();
+	void refundRequested();
 
 private slots:
 	void showBrowse() { showPage(0); }
@@ -667,6 +668,24 @@ private slots:
 		if (row < 0) return;
 		CartItem item = cart.getItem(row);
 		cart.removeItem(item.product->getProductID());
+		refreshCart(); updateCartBadge();
+	}
+	void onUpdateCartQty() {
+		int row = tblCart->currentRow();
+		if (row < 0) {
+			QMessageBox::warning(this, "Select Item", "Please select a cart item to update its quantity.");
+			return;
+		}
+		CartItem item = cart.getItem(row);
+		int newQty = spinCartQty->value();
+		// Check stock limit
+		if (newQty > item.product->getStockQty()) {
+			QMessageBox::warning(this, "Stock Limit",
+				"Only " + QString::number(item.product->getStockQty()) + " units available for " +
+				QString::fromStdString(item.product->getName()) + ".");
+			return;
+		}
+		cart.updateQty(item.product->getProductID(), newQty);
 		refreshCart(); updateCartBadge();
 	}
 	void onApplyCoupon() {
@@ -702,6 +721,7 @@ private slots:
 		QString summary;
 		summary += "Receipt ID : " + QString::fromStdString(receiptID) + "\n";
 		summary += "Customer   : " + QString::fromStdString(currentCustomer.getName()) + "\n";
+		summary += "Date/Time  : " + QString::fromStdString(timestamp) + "\n";
 		summary += "──────────────────────────────\n";
 		for (int i = 0; i < cart.getItemCount(); i++) {
 			CartItem it = cart.getItem(i);
@@ -740,13 +760,15 @@ private:
 	int       receiptCounter;
 	QStackedWidget* pages;
 	QLabel* lblWelcome;
-	QPushButton* btnBrowse, * btnCartNav, * btnLogout;
+	QPushButton* btnBrowse, * btnCartNav, * btnRefundNav, * btnLogout;
 	QTableWidget* tblProducts;
 	QSpinBox* spinQty;
 	QPushButton* btnAddToCart;
 	QTableWidget* tblCart;
 	QLabel* lblCartTotal;
 	QPushButton* btnRemove, * btnGoCheckout;
+	QSpinBox* spinCartQty;
+	QPushButton* btnUpdateQty;
 	QLabel* lblSub, * lblTax, * lblDisc, * lblCouponAmt, * lblGrand;
 	QLineEdit* txtCoupon;
 	QPushButton* btnApplyCoupon, * btnPlaceOrder;
@@ -811,9 +833,10 @@ private:
 		lblWelcome = new QLabel("Welcome!", this); lblWelcome->setObjectName("lblWelcome");
 		btnBrowse = new QPushButton("Browse Products", this); btnBrowse->setObjectName("btnNavBrowse"); btnBrowse->setFixedHeight(36); btnBrowse->setCursor(Qt::PointingHandCursor);
 		btnCartNav = new QPushButton("My Cart", this);         btnCartNav->setObjectName("btnNavCart");   btnCartNav->setFixedHeight(36); btnCartNav->setCursor(Qt::PointingHandCursor);
+		btnRefundNav = new QPushButton("Request Refund", this); btnRefundNav->setObjectName("btnNavRefund"); btnRefundNav->setFixedHeight(36); btnRefundNav->setCursor(Qt::PointingHandCursor);
 		btnLogout = new QPushButton("Logout", this);          btnLogout->setObjectName("btnCustLogout"); btnLogout->setFixedHeight(36);  btnLogout->setCursor(Qt::PointingHandCursor);
 		topBar->addWidget(lblWelcome); topBar->addStretch();
-		topBar->addWidget(btnBrowse); topBar->addWidget(btnCartNav); topBar->addWidget(btnLogout);
+		topBar->addWidget(btnBrowse); topBar->addWidget(btnCartNav); topBar->addWidget(btnRefundNav); topBar->addWidget(btnLogout);
 		pages = new QStackedWidget(this);
 		pages->addWidget(buildBrowsePage());
 		pages->addWidget(buildCartPage());
@@ -827,6 +850,7 @@ private:
 		setLayout(mainLay);
 		connect(btnBrowse, &QPushButton::clicked, this, &CustomerScreen::showBrowse);
 		connect(btnCartNav, &QPushButton::clicked, this, &CustomerScreen::showCartPage);
+		connect(btnRefundNav, &QPushButton::clicked, this, [this]() { emit refundRequested(); });
 		connect(btnLogout, &QPushButton::clicked, this, &CustomerScreen::onLogoutClicked);
 	}
 
@@ -864,12 +888,29 @@ private:
 		tblCart->verticalHeader()->setVisible(false);
 		tblCart->setMinimumHeight(300);
 		lblCartTotal = new QLabel("Estimated Total: Rs.0.00", page); lblCartTotal->setObjectName("lblTotal"); lblCartTotal->setAlignment(Qt::AlignRight);
-		btnRemove = new QPushButton("Remove Selected", page);    btnRemove->setObjectName("btnRemove");   btnRemove->setFixedHeight(38);    btnRemove->setCursor(Qt::PointingHandCursor);
+
+		// ── Update Qty row ──
+		spinCartQty = new QSpinBox(page);
+		spinCartQty->setMinimum(1); spinCartQty->setMaximum(99); spinCartQty->setValue(1);
+		spinCartQty->setFixedWidth(70); spinCartQty->setFixedHeight(38);
+		btnUpdateQty = new QPushButton("Update Qty", page);
+		btnUpdateQty->setObjectName("btnUpdateQty"); btnUpdateQty->setFixedHeight(38);
+		btnUpdateQty->setCursor(Qt::PointingHandCursor);
+		btnRemove = new QPushButton("Remove Selected", page); btnRemove->setObjectName("btnRemove"); btnRemove->setFixedHeight(38); btnRemove->setCursor(Qt::PointingHandCursor);
 		btnGoCheckout = new QPushButton("Proceed to Checkout", page); btnGoCheckout->setObjectName("btnCheckout"); btnGoCheckout->setFixedHeight(38); btnGoCheckout->setCursor(Qt::PointingHandCursor);
+
 		QHBoxLayout* btns = new QHBoxLayout();
-		btns->addWidget(btnRemove); btns->addStretch(); btns->addWidget(btnGoCheckout);
+		btns->addWidget(btnRemove);
+		btns->addSpacing(10);
+		btns->addWidget(new QLabel("New Qty:", page));
+		btns->addWidget(spinCartQty);
+		btns->addWidget(btnUpdateQty);
+		btns->addStretch();
+		btns->addWidget(btnGoCheckout);
+
 		lay->addWidget(lbl); lay->addWidget(tblCart); lay->addWidget(lblCartTotal); lay->addLayout(btns);
 		connect(btnRemove, &QPushButton::clicked, this, &CustomerScreen::onRemoveFromCart);
+		connect(btnUpdateQty, &QPushButton::clicked, this, &CustomerScreen::onUpdateCartQty);
 		connect(btnGoCheckout, &QPushButton::clicked, this, &CustomerScreen::showCheckout);
 		return page;
 	}
@@ -921,12 +962,16 @@ private:
             QPushButton#btnNavBrowse:hover { background:#1558b0; }
             QPushButton#btnNavCart   { background:#34a853; color:white; font-weight:bold; border:none; border-radius:6px; padding:6px 14px; }
             QPushButton#btnNavCart:hover   { background:#277a3e; }
+            QPushButton#btnNavRefund   { background:#f59e0b; color:white; font-weight:bold; border:none; border-radius:6px; padding:6px 14px; }
+            QPushButton#btnNavRefund:hover   { background:#d97706; }
             QPushButton#btnCustLogout { background:#6b7280; color:white; border:none; border-radius:6px; padding:5px 12px; }
             QPushButton#btnCustLogout:hover { background:#4b5563; }
             QPushButton#btnAddCart   { background:#1a73e8; color:white; font-weight:bold; border:none; border-radius:6px; padding:6px 16px; }
             QPushButton#btnAddCart:hover   { background:#1558b0; }
             QPushButton#btnRemove    { background:#dc2626; color:white; font-weight:bold; border:none; border-radius:6px; padding:6px 14px; }
             QPushButton#btnRemove:hover    { background:#b91c1c; }
+            QPushButton#btnUpdateQty { background:#1a73e8; color:white; font-weight:bold; border:none; border-radius:6px; padding:6px 14px; }
+            QPushButton#btnUpdateQty:hover { background:#1558b0; }
             QPushButton#btnCheckout  { background:#34a853; color:white; font-weight:bold; border:none; border-radius:6px; padding:6px 18px; }
             QPushButton#btnCheckout:hover  { background:#277a3e; }
             QPushButton#btnApplyCoupon { background:#f59e0b; color:white; font-weight:bold; border:none; border-radius:6px; padding:6px 14px; }
@@ -1433,6 +1478,221 @@ private:
             QPushButton#btnExport:hover { background:#277a3e; }
             QPushButton#btnBack { background:transparent; color:#1a73e8; border:1px solid #1a73e8; border-radius:6px; padding:5px 12px; }
             QPushButton#btnBack:hover { background:#e8f0fe; }
+        )");
+	}
+};
+
+
+// ============================================================
+//  REFUND SCREEN
+//  Policy (Globals.h):
+//    REFUND_MAX_DAYS       = 7   (returns within 7 days)
+//    REFUND_RESTOCKING_FEE = 0.05 (5% deducted from refund)
+//
+//  Flow:
+//    1. Customer enters Receipt ID, amount paid, purchase date
+//    2. System checks 7-day window
+//    3. Calculates refund = paid - (paid * 5%)
+//    4. Logs to data/refunds.txt via FileManager::appendRefundLog
+//    5. Shows success / error result
+// ============================================================
+class RefundScreen : public QWidget {
+	Q_OBJECT
+public:
+	explicit RefundScreen(QWidget* parent = nullptr) : QWidget(parent) {
+		setupUI(); applyStyles();
+	}
+
+	// Reset all fields — call before showing screen
+	void reset() {
+		txtReceiptID->clear();
+		txtAmount->clear();
+		txtPurchaseDate->clear();
+		txtReason->clear();
+		lblResult->hide();
+		lblResult->setText("");
+	}
+
+signals:
+	void backRequested();
+
+private slots:
+	void onSubmitClicked() {
+		QString receiptID = txtReceiptID->text().trimmed();
+		QString amountStr = txtAmount->text().trimmed();
+		QString dateStr = txtPurchaseDate->text().trimmed();
+
+		// ── Validation ──
+		if (receiptID.isEmpty() || amountStr.isEmpty() || dateStr.isEmpty()) {
+			showResult(false, "Please fill in Receipt ID, Amount Paid, and Purchase Date.");
+			return;
+		}
+		if (!receiptID.startsWith("RCP-")) {
+			showResult(false, "Invalid Receipt ID.\nIt must start with RCP- (e.g. RCP-0001).\nCheck your receipt.");
+			return;
+		}
+		bool ok;
+		double paidAmount = amountStr.toDouble(&ok);
+		if (!ok || paidAmount <= 0) {
+			showResult(false, "Please enter a valid paid amount (e.g. 1500.00).");
+			return;
+		}
+		QDate purchaseDate = QDate::fromString(dateStr, "yyyy-MM-dd");
+		if (!purchaseDate.isValid()) {
+			showResult(false, "Invalid date format.\nUse YYYY-MM-DD (e.g. 2025-06-01).");
+			return;
+		}
+		int daysDiff = purchaseDate.daysTo(QDate::currentDate());
+		if (daysDiff < 0) {
+			showResult(false, "Purchase date cannot be in the future!");
+			return;
+		}
+		if (daysDiff > REFUND_MAX_DAYS) {
+			showResult(false,
+				QString("Refund window expired!\n"
+					"Your purchase was %1 day(s) ago.\n"
+					"Refunds are only accepted within %2 days of purchase.")
+				.arg(daysDiff).arg(REFUND_MAX_DAYS));
+			return;
+		}
+
+		// ── Calculate ──
+		double restockingFee = paidAmount * REFUND_RESTOCKING_FEE; // 5%
+		double refundAmount = paidAmount - restockingFee;
+
+		// ── Log to file ──
+		time_t now = time(nullptr);
+		char buf[64];
+		strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", localtime(&now));
+		string timestamp(buf);
+
+		FileManager::appendRefundLog(
+			receiptID.toStdString(),
+			"(Customer Portal)",
+			refundAmount,
+			restockingFee,
+			timestamp
+		);
+
+		// ── Show success summary ──
+		QString summary;
+		summary += "REFUND APPROVED\n\n";
+		summary += QString("Receipt ID       : %1\n").arg(receiptID);
+		summary += QString("Amount Paid      : Rs.%1\n").arg(QString::number(paidAmount, 'f', 2));
+		summary += QString("Restocking Fee   : Rs.%1  (5%%)\n").arg(QString::number(restockingFee, 'f', 2));
+		summary += "---------------------------------------\n";
+		summary += QString("Refund Amount    : Rs.%1\n").arg(QString::number(refundAmount, 'f', 2));
+		summary += QString("\nProcessed at: %1").arg(QString::fromStdString(timestamp));
+		showResult(true, summary);
+
+		// Clear form after success
+		txtReceiptID->clear();
+		txtAmount->clear();
+		txtPurchaseDate->clear();
+		txtReason->clear();
+	}
+
+	void onBackClicked() { emit backRequested(); }
+
+private:
+	QLineEdit* txtReceiptID;
+	QLineEdit* txtAmount;
+	QLineEdit* txtPurchaseDate;
+	QLineEdit* txtReason;
+	QLabel* lblResult;
+
+	void showResult(bool success, const QString& msg) {
+		lblResult->setText(msg);
+		lblResult->setStyleSheet(success
+			? "background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; border-radius:8px; padding:14px; font-size:13px;"
+			: "background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; border-radius:8px; padding:14px; font-size:13px;");
+		lblResult->show();
+	}
+
+	void setupUI() {
+		setMinimumSize(620, 600);
+
+		// ── Top bar ──
+		QHBoxLayout* topBar = new QHBoxLayout();
+		QLabel* lblTitle = new QLabel("Request a Refund", this);
+		lblTitle->setObjectName("lblRefundTitle");
+		QPushButton* btnBack = new QPushButton("<- Back", this);
+		btnBack->setObjectName("btnRefundBack");
+		btnBack->setFixedWidth(90);
+		btnBack->setCursor(Qt::PointingHandCursor);
+		topBar->addWidget(lblTitle); topBar->addStretch(); topBar->addWidget(btnBack);
+
+		// ── Policy info box ──
+		QLabel* lblPolicy = new QLabel(this);
+		lblPolicy->setText(
+			"Refund Policy:\n"
+			"  - Refunds accepted within " + QString::number(REFUND_MAX_DAYS) + " days of purchase\n"
+			"  - A 5% restocking fee is deducted from your refund\n"
+			"  - You need your Receipt ID from your purchase receipt (e.g. RCP-0001)"
+		);
+		lblPolicy->setObjectName("lblPolicy");
+		lblPolicy->setWordWrap(true);
+
+		// ── Form ──
+		QGroupBox* grpForm = new QGroupBox("Refund Details", this);
+		QGridLayout* grid = new QGridLayout(grpForm);
+		grid->setSpacing(12); grid->setContentsMargins(18, 18, 18, 18);
+
+		txtReceiptID = new QLineEdit(); txtReceiptID->setPlaceholderText("e.g. RCP-0001");              txtReceiptID->setFixedHeight(38);
+		txtAmount = new QLineEdit(); txtAmount->setPlaceholderText("Amount you paid e.g. 1500.00"); txtAmount->setFixedHeight(38);
+		txtPurchaseDate = new QLineEdit(); txtPurchaseDate->setPlaceholderText("YYYY-MM-DD e.g. 2025-06-01"); txtPurchaseDate->setFixedHeight(38);
+		txtReason = new QLineEdit(); txtReason->setPlaceholderText("Reason for return (optional)"); txtReason->setFixedHeight(38);
+
+		grid->addWidget(new QLabel("Receipt ID:"), 0, 0); grid->addWidget(txtReceiptID, 0, 1);
+		grid->addWidget(new QLabel("Amount Paid (Rs.):"), 1, 0); grid->addWidget(txtAmount, 1, 1);
+		grid->addWidget(new QLabel("Purchase Date:"), 2, 0); grid->addWidget(txtPurchaseDate, 2, 1);
+		grid->addWidget(new QLabel("Reason:"), 3, 0); grid->addWidget(txtReason, 3, 1);
+
+		// ── Submit button ──
+		QPushButton* btnSubmit = new QPushButton("Submit Refund Request", this);
+		btnSubmit->setObjectName("btnRefundSubmit");
+		btnSubmit->setFixedHeight(46);
+		btnSubmit->setCursor(Qt::PointingHandCursor);
+
+		// ── Result label (hidden until submit) ──
+		lblResult = new QLabel("", this);
+		lblResult->setWordWrap(true);
+		lblResult->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+		lblResult->setMinimumHeight(130);
+		lblResult->hide();
+
+		// ── Layout ──
+		QVBoxLayout* mainLay = new QVBoxLayout(this);
+		mainLay->setContentsMargins(28, 22, 28, 22); mainLay->setSpacing(14);
+		mainLay->addLayout(topBar);
+		mainLay->addWidget(lblPolicy);
+		mainLay->addWidget(grpForm);
+		mainLay->addWidget(btnSubmit);
+		mainLay->addWidget(lblResult);
+		mainLay->addStretch();
+		setLayout(mainLay);
+
+		connect(btnSubmit, &QPushButton::clicked, this, &RefundScreen::onSubmitClicked);
+		connect(btnBack, &QPushButton::clicked, this, &RefundScreen::onBackClicked);
+	}
+
+	void applyStyles() {
+		setStyleSheet(R"(
+            QWidget { background:#f4f6f9; font-family:Arial; font-size:13px; color:#2c3e50; }
+            QLabel#lblRefundTitle { font-size:18px; font-weight:bold; color:#f59e0b; }
+            QLabel#lblPolicy { background:#fffbeb; border:1px solid #fde68a; border-radius:8px;
+                               padding:12px 16px; color:#78350f; font-size:12px; line-height:1.5; }
+            QGroupBox { font-weight:bold; border:1px solid #d0d7de; border-radius:8px;
+                        margin-top:8px; padding-top:10px; background:white; }
+            QGroupBox::title { subcontrol-origin:margin; left:12px; color:#f59e0b; }
+            QLineEdit { border:1px solid #ccc; border-radius:6px; padding:6px 10px; background:white; }
+            QLineEdit:focus { border:1px solid #f59e0b; }
+            QPushButton#btnRefundSubmit { background:#f59e0b; color:white; font-size:14px;
+                                          font-weight:bold; border:none; border-radius:8px; }
+            QPushButton#btnRefundSubmit:hover { background:#d97706; }
+            QPushButton#btnRefundBack { background:transparent; color:#1a73e8;
+                                        border:1px solid #1a73e8; border-radius:6px; padding:5px 12px; }
+            QPushButton#btnRefundBack:hover { background:#e8f0fe; }
         )");
 	}
 };

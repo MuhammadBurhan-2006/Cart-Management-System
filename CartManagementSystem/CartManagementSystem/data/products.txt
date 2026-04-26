@@ -1,1 +1,1 @@
-E|123456|s26 ultra|700000|45|Samsung|12|
+E|123456|s26 ultra|700000|15|Samsung|12|

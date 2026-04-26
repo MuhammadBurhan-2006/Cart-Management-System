@@ -1,7 +1,7 @@
 ===== SUPERMARKET BILLING SYSTEM =====
 Receipt ID  : RCP-0001
 Customer    : Areeba Akbar
-Date / Time : 2026-04-26 01:38:11
+Date / Time : 2026-04-26 14:19:36
 -----------------------------------------
   #  Name                     Qty    Price         Total
 -----------------------------------------

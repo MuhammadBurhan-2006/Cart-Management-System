@@ -1,73 +1,72 @@
-P|1|Fresh Milk 1L|150|79|2026-05-13|
+P|1|Fresh Milk 1L|150|80|2026-05-13|
 P|2|Greek Yogurt 500g|100|200|2026-05-13|
-P|3|Eggs 12 pack|180|48|2026-06-10|
+P|3|Eggs 12 pack|180|50|2026-06-10|
 P|4|Cheddar Cheese 500g|400|250|2026-05-13|
 P|5|Butter 200g|280|55|2026-05-13|
-P|6|Fresh Orange Juice 1L|220|39|2026-05-13|
+P|6|Fresh Orange Juice 1L|220|40|2026-05-13|
 P|7|Apple per kg|180|30|2026-05-13|
 P|8|Banana per kg|100|33|2026-05-13|
 P|9|Tomatoes per kg|100|41|2026-05-13|
 P|10|Chicken Breast 500g|480|29|2026-05-13|
 P|11|Minced Beef 500g|550|50|2026-05-13|
 P|12|Fresh Bread Loaf|120|90|2026-05-08|
-P|13|Strawberries 250g|250|56|2026-06-11|
+P|13|Strawberries 250g|250|60|2026-06-11|
 P|14|Mango each|80|120|2026-06-17|
 P|15|Cream Cheese 200g|300|35|2026-06-20|
 P|16|Whole Cream 500ml|180|65|2026-06-18|
 P|17|Mozzarella 200g|420|30|2026-08-11|
-P|16|Whole Cream 500ml|180|65|2026-06-05|
-P|17|Mozzarella 200g|420|30|2026-06-18|
-P|18|Watermelon per kg|60|100|2026-05-22|
-P|19|Grapes per kg|300|80|2026-05-19|
-P|20|Spinach 250g|80|90|2026-05-09|
-P|21|Cucumber per kg|70|110|2026-05-11|
-P|22|Carrot per kg|90|130|2026-05-15|
-P|23|Mutton 500g|900|40|2026-05-13|
-P|24|Fish Fillet 400g|600|35|2026-05-12|
-P|25|Fresh Cream 200ml|160|50|2026-06-10|
-E|26|Samsung 65 inch Smart TV|120000|20|Samsung|24|
-E|27|iPhone 15|280000|10|Apple|12|
-E|28|HP Laptop 15 inch|150000|12|HP|12|
-E|29|Sony Wireless Headphones|18000|20|Sony|6|
-E|30|Samsung Microwave Oven|25000|15|Samsung|12|
-E|31|Philips Air Fryer|22000|18|Philips|12|
-E|32|Haier Refrigerator 14 CFT|85000|6|Haier|36|
-E|33|Canon DSLR Camera|95000|5|Canon|12|
-E|34|JBL Bluetooth Speaker|12000|25|JBL|6|
-E|35|Dell Wireless Mouse|2500|40|Dell|6|
-E|36|Xiaomi Smart Watch|15000|22|Xiaomi|12|
-E|37|Anker Power Bank 20000mAh|8500|30|Anker|12|
-E|38|TP-Link WiFi Router|6500|18|TP-Link|12|
-E|39|Logitech Keyboard|4500|35|Logitech|6|
-E|40|Samsung Washing Machine|65000|7|Samsung|24|
-E|41|Philips Electric Kettle|3500|28|Philips|6|
-E|42|Dawlance Room AC 1.5 Ton|95000|8|Dawlance|36|
-E|43|Sony PlayStation 5|120000|4|Sony|12|
-E|44|Dell Monitor 24 inch|45000|10|Dell|24|
-E|45|Xiaomi Earbuds|5500|33|Xiaomi|6|
-G|46|Basmati Rice 5kg|800|120|5|
-G|47|Wheat Flour 10kg|950|100|10|
-G|48|Sunflower Oil 5L|1200|80|5|
-G|49|Sugar 1kg|160|197|1|
-G|50|Salt 800g|60|250|0.8|
-G|51|Black Tea 500g|450|90|0.5|
-G|52|Instant Coffee 200g|850|70|0.2|
-G|53|Lentils Daal 1kg|280|150|1|
-G|54|Chickpeas 1kg|260|130|1|
-G|55|Pasta 500g|180|110|0.5|
-G|56|Tomato Ketchup 800g|320|85|0.8|
-G|57|Soy Sauce 300ml|220|60|0.3|
-G|58|Biscuits Pack 400g|150|140|0.4|
-G|59|Mineral Water 1.5L|80|300|1.5|
-G|60|Laundry Detergent 3kg|950|75|3|
-G|61|Dishwashing Liquid 750ml|280|95|0.75|
-G|62|Shampoo 400ml|550|80|0.4|
-G|63|Soap Bar 6 Pack|220|110|0.6|
-G|64|Tissue Box 200 sheets|180|160|0.4|
-G|65|Green Tea 100 bags|600|70|0.2|
-G|66|Olive Oil 1L|1800|50|1|
-G|67|Honey 500g|1200|45|0.5|
-G|68|Oats 1kg|380|90|1|
-G|69|Cornflakes 500g|420|75|0.5|
-G|70|Chilli Sauce 340g|260|88|0.34|
-G|71|Candies pack|180|50|2|
+P|16|Whole Cream 500ml|180.0|65|2026-06-05|
+P|17|Mozzarella 200g|420.0|30|2026-06-18|
+P|18|Watermelon per kg|60.0|100|2026-05-22|
+P|19|Grapes per kg|300.0|80|2026-05-19|
+P|20|Spinach 250g|80.0|90|2026-05-09|
+P|21|Cucumber per kg|70.0|110|2026-05-11|
+P|22|Carrot per kg|90.0|130|2026-05-15|
+P|23|Mutton 500g|900.0|40|2026-05-13|
+P|24|Fish Fillet 400g|600.0|35|2026-05-12|
+P|25|Fresh Cream 200ml|160.0|50|2026-06-10|
+E|26|Samsung 65 inch Smart TV|120000.0|10|Samsung|24|
+E|27|iPhone 15|280000.0|8|Apple|12|
+E|28|HP Laptop 15 inch|150000.0|12|HP|12|
+E|29|Sony Wireless Headphones|18000.0|20|Sony|6|
+E|30|Samsung Microwave Oven|25000.0|15|Samsung|12|
+E|31|Philips Air Fryer|22000.0|18|Philips|12|
+E|32|Haier Refrigerator 14 CFT|85000.0|6|Haier|36|
+E|33|Canon DSLR Camera|95000.0|5|Canon|12|
+E|34|JBL Bluetooth Speaker|12000.0|25|JBL|6|
+E|35|Dell Wireless Mouse|2500.0|40|Dell|6|
+E|36|Xiaomi Smart Watch|15000.0|22|Xiaomi|12|
+E|37|Anker Power Bank 20000mAh|8500.0|30|Anker|12|
+E|38|TP-Link WiFi Router|6500.0|18|TP-Link|12|
+E|39|Logitech Keyboard|4500.0|35|Logitech|6|
+E|40|Samsung Washing Machine|65000.0|7|Samsung|24|
+E|41|Philips Electric Kettle|3500.0|28|Philips|6|
+E|42|Dawlance Room AC 1.5 Ton|95000.0|5|Dawlance|36|
+E|43|Sony PlayStation 5|120000.0|4|Sony|12|
+E|44|Dell Monitor 24 inch|45000.0|10|Dell|24|
+E|45|Xiaomi Earbuds|5500.0|33|Xiaomi|6|
+G|46|Basmati Rice 5kg|800.0|120|5.0|
+G|47|Wheat Flour 10kg|950.0|100|10.0|
+G|48|Sunflower Oil 5L|1200.0|80|5.0|
+G|49|Sugar 1kg|160.0|200|1.0|
+G|50|Salt 800g|60.0|250|0.8|
+G|51|Black Tea 500g|450.0|90|0.5|
+G|52|Instant Coffee 200g|850.0|70|0.2|
+G|53|Lentils Daal 1kg|280.0|150|1.0|
+G|54|Chickpeas 1kg|260.0|130|1.0|
+G|55|Pasta 500g|180.0|110|0.5|
+G|56|Tomato Ketchup 800g|320.0|85|0.8|
+G|57|Soy Sauce 300ml|220.0|60|0.3|
+G|58|Biscuits Pack 400g|150.0|140|0.4|
+G|59|Mineral Water 1.5L|80.0|300|1.5|
+G|60|Laundry Detergent 3kg|950.0|75|3.0|
+G|61|Dishwashing Liquid 750ml|280.0|95|0.75|
+G|62|Shampoo 400ml|550.0|80|0.4|
+G|63|Soap Bar 6 Pack|220.0|110|0.6|
+G|64|Tissue Box 200 sheets|180.0|160|0.4|
+G|65|Green Tea 100 bags|600.0|70|0.2|
+G|66|Olive Oil 1L|1800.0|50|1.0|
+G|67|Honey 500g|1200.0|45|0.5|
+G|68|Oats 1kg|380.0|90|1.0|
+G|69|Cornflakes 500g|420.0|75|0.5|
+G|70|Chilli Sauce 340g|260.0|88|0.34|

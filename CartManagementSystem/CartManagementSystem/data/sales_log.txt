@@ -63,20 +63,3 @@ Coupon Discount : Rs.0
 Grand Total     : Rs.3.92e+06
 -----------------------------------------
 
------------------------------------------
-Receipt ID : RCP-0001
-Customer   : Areeba Akbar
-Timestamp  : 2026-04-28 17:37:40
-Items:
-  Fresh Milk 1L x1  @  Rs.150  =  Rs.150
-  Eggs 12 pack x2  @  Rs.180  =  Rs.360
-  Fresh Orange Juice 1L x1  @  Rs.220  =  Rs.220
-  Strawberries 250g x4  @  Rs.250  =  Rs.1000
-  Sugar 1kg x3  @  Rs.160  =  Rs.480
-Subtotal        : Rs.2210
-Tax             : Rs.86.5
-Item Discounts  : Rs.211.4
-Coupon Discount : Rs.0
-Grand Total     : Rs.2085.1
------------------------------------------
-

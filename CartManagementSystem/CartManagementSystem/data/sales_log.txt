@@ -63,3 +63,16 @@ Coupon Discount : Rs.0
 Grand Total     : Rs.3.92e+06
 -----------------------------------------
 
+-----------------------------------------
+Receipt ID : RCP-0001
+Customer   : Areeba Akbar
+Timestamp  : 2026-05-01 17:14:10
+Items:
+  Cheddar Cheese 500g x4  @  Rs.400  =  Rs.1600
+Subtotal        : Rs.1600
+Tax             : Rs.80
+Item Discounts  : Rs.160
+Coupon Discount : Rs.0
+Grand Total     : Rs.1520
+-----------------------------------------
+

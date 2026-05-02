@@ -1,6 +1,5 @@
 #ifndef GUI_H
 #define GUI_H
-
 #include <QWidget>
 #include <QPushButton>
 #include <QLabel>
@@ -991,7 +990,7 @@ private:
 
 
 // ============================================================
-//  ADMIN DASHBOARD SCREEN — Khubaib (25I-2051)
+//  ADMIN DASHBOARD SCREEN
 //  Shows stat cards + nav buttons to other admin screens
 // ============================================================
 class AdminDashboardScreen : public QWidget {
@@ -1181,7 +1180,7 @@ private:
 
 
 // ============================================================
-//  ADMIN STOCK SCREEN — Khubaib (25I-2051)
+//  ADMIN STOCK SCREEN 
 //  Table of all products with OK/LOW/CRITICAL tags
 //  + Update Stock form at the bottom
 // ============================================================
@@ -1344,7 +1343,7 @@ private:
 
 
 // ============================================================
-//  ADMIN SALES REPORT SCREEN — Khubaib (25I-2051)
+//  ADMIN SALES REPORT SCREEN 
 //  Reads sales_log.txt via Report class and displays summary
 //  Export button saves to data/reports/RPT-<date>.txt
 // ============================================================
@@ -1697,4 +1696,4 @@ private:
 	}
 };
 
-#endif // GUI_H
+#endif 

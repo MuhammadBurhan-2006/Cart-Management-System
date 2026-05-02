@@ -1,6 +1,5 @@
 #ifndef PRODUCTS_H
 #define PRODUCTS_H
-
 #include<iostream>
 #include<string>
 #include "Globals.h"

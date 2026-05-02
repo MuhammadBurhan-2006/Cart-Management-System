@@ -1,20 +1,5 @@
 ﻿#ifndef FILEMANAGER_H
 #define FILEMANAGER_H
-
-// ============================================================
-//  FileManager.h  —  Abdul Rehman (25L-2074)
-//  Handles ALL file I/O for the Supermarket Billing System.
-//
-//  OPTIONAL INCLUDE — main.cpp works WITHOUT this file.
-//  Add #include "FileManager.h" only when you want persistence.
-//
-//  Depends on: Globals.h, Products.h, Customer.h
-//  Data folder structure required:
-//      data/
-//      data/receipts/
-//      data/reports/
-// ============================================================
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -23,22 +8,8 @@
 #include "Products.h"
 #include "Customer.h"
 using namespace std;
-
 class FileManager {
 public:
-
-    // ============================================================
-    //  SECTION 1 — PRODUCT FILE  (data/products.txt)
-    //
-    //  File format (one product per line):
-    //      P|id|name|price|qty|expiryDate
-    //      E|id|name|price|qty|brand|warrantyMonths
-    //      G|id|name|price|qty|weightKg
-    // ============================================================
-
-    // Loads all products from file into caller's array.
-    // Returns number of products loaded.
-    // Usage: int n = FileManager::loadProducts(arr, MAX_PRODUCTS);
     static int loadProducts(Product* products[], int maxSize) {
         ifstream fin(FILE_PRODUCTS);
         if (!fin.is_open()) {
@@ -54,13 +25,11 @@ public:
             string type, tok, name;
             int    id, qty;
             double price;
-
             getline(ss, type, '|');
             getline(ss, tok, '|'); id = stoi(tok);
             getline(ss, name, '|');
             getline(ss, tok, '|'); price = stod(tok);
             getline(ss, tok, '|'); qty = stoi(tok);
-
             if (type == "P") {
                 string expiry;
                 getline(ss, expiry, '|');
@@ -84,7 +53,6 @@ public:
         cout << "[FileManager] Loaded " << count << " products from file." << endl;
         return count;
     }
-
     // Saves entire product array to file (overwrites previous data).
     // Call after any add / edit / delete / stock change.
     static void saveProducts(Product* products[], int count) {
@@ -120,7 +88,6 @@ public:
         fout.close();
         cout << "[FileManager] Saved " << count << " products to file." << endl;
     }
-
     // Decrements stock for one product by ID, then re-saves whole file.
     // Called after successful checkout.
     static void decrementStock(Product* products[], int count, int productID, int qtySold) {
@@ -133,16 +100,6 @@ public:
         }
         saveProducts(products, count);
     }
-
-
-    // ============================================================
-    //  SECTION 2 — CUSTOMER FILE  (data/customers.txt)
-    //
-    //  File format:
-    //      id|name|username|password|phone
-    // ============================================================
-
-    // Loads all customers. Returns count.
     static int loadCustomers(Customer customers[], int maxSize) {
         ifstream fin(FILE_CUSTOMERS);
         if (!fin.is_open()) {
@@ -167,9 +124,8 @@ public:
         fin.close();
         return count;
     }
-
     // Appends one new customer to the file.
-    // Called from: registration screen.
+    // Called from registration screen.
     static void saveNewCustomer(const Customer& c, const string& password) {
         ofstream fout(FILE_CUSTOMERS, ios::app);
         if (!fout.is_open()) {
@@ -183,7 +139,6 @@ public:
             << c.getPhone() << "|\n";
         fout.close();
     }
-
     // Validates customer login against file. Returns index in array or -1.
     static int validateCustomerLogin(Customer customers[], int count,
         const string& username, const string& password) {
@@ -192,26 +147,12 @@ public:
         }
         return -1;
     }
-
-
-    // ============================================================
-    //  SECTION 3 — ADMIN LOGIN  (data/admins.txt)
-    //
-    //  File format:
-    //      id|name|username|password
-    //
-    //  Falls back to DEFAULT_ADMIN_USER / DEFAULT_ADMIN_PASS from Globals.h
-    //  if file does not exist yet.
-    // ============================================================
-
     static bool validateAdminLogin(const string& username, const string& password) {
         // Always allow hardcoded default from Globals.h
         if (username == DEFAULT_ADMIN_USER && password == DEFAULT_ADMIN_PASS)
             return true;
-
         ifstream fin(FILE_ADMINS);
         if (!fin.is_open()) return false;
-
         string line;
         while (getline(fin, line)) {
             if (line.empty()) continue;
@@ -229,13 +170,6 @@ public:
         fin.close();
         return false;
     }
-
-
-    // ============================================================
-    //  SECTION 4 — SALES LOG  (data/sales_log.txt)
-    //  Appends one transaction block per checkout.
-    // ============================================================
-
     static void appendSalesLog(const string& receiptID,
         const string& customerName,
         Cart& cart,
@@ -251,10 +185,10 @@ public:
             cout << "[FileManager] Error: Cannot write to " << FILE_SALES_LOG << endl;
             return;
         }
-        fout << RECEIPT_DIVIDER << "\n";
-        fout << "Receipt ID : " << receiptID << "\n";
-        fout << "Customer   : " << customerName << "\n";
-        fout << "Timestamp  : " << timestamp << "\n";
+        fout << RECEIPT_DIVIDER << endl;
+        fout << "Receipt ID : " << receiptID << endl;
+        fout << "Customer   : " << customerName << endl;
+        fout << "Timestamp  : " << timestamp << endl;
         fout << "Items:\n";
         for (int i = 0; i < cart.getItemCount(); i++) {
             CartItem item = cart.getItem(i);
@@ -262,24 +196,17 @@ public:
             fout << "  " << item.product->getName()
                 << " x" << item.quantity
                 << "  @  " << CURRENCY_SYMBOL << item.product->getPrice()
-                << "  =  " << CURRENCY_SYMBOL << lineTotal << "\n";
+                << "  =  " << CURRENCY_SYMBOL << lineTotal << endl;
         }
-        fout << "Subtotal        : " << CURRENCY_SYMBOL << subtotal << "\n";
-        fout << "Tax             : " << CURRENCY_SYMBOL << tax << "\n";
-        fout << "Item Discounts  : " << CURRENCY_SYMBOL << discount << "\n";
-        fout << "Coupon Discount : " << CURRENCY_SYMBOL << couponDiscount << "\n";
-        fout << "Grand Total     : " << CURRENCY_SYMBOL << grandTotal << "\n";
-        fout << RECEIPT_DIVIDER << "\n\n";
+        fout << "Subtotal        : " << CURRENCY_SYMBOL << subtotal << endl;
+        fout << "Tax             : " << CURRENCY_SYMBOL << tax << endl;
+        fout << "Item Discounts  : " << CURRENCY_SYMBOL << discount << endl;
+        fout << "Coupon Discount : " << CURRENCY_SYMBOL << couponDiscount << endl;
+        fout << "Grand Total     : " << CURRENCY_SYMBOL << grandTotal << endl;
+        fout << RECEIPT_DIVIDER << endl;
         fout.close();
         cout << "[FileManager] Sale logged: " << receiptID << endl;
     }
-
-
-    // ============================================================
-    //  SECTION 5 — RECEIPT FILE  (data/receipts/RCP-XXXX.txt)
-    //  One .txt file per transaction.
-    // ============================================================
-
     static void saveReceipt(Bill& bill,
         Cart& cart,
         const string& customerName,
@@ -293,13 +220,13 @@ public:
                 << "\n  Make sure the data/receipts/ folder exists." << endl;
             return;
         }
-        fout << RECEIPT_HEADER << "\n";
-        fout << "Receipt ID  : " << receiptID << "\n";
-        fout << "Customer    : " << customerName << "\n";
-        fout << "Date / Time : " << timestamp << "\n";
-        fout << RECEIPT_DIVIDER << "\n";
+        fout << RECEIPT_HEADER << endl;
+        fout << "Receipt ID  : " << receiptID << endl;
+        fout << "Customer    : " << customerName << endl;
+        fout << "Date / Time : " << timestamp << endl;
+        fout << RECEIPT_DIVIDER << endl;
         fout << "  #  Name                     Qty    Price         Total\n";
-        fout << RECEIPT_DIVIDER << "\n";
+        fout << RECEIPT_DIVIDER << endl;
         for (int i = 0; i < cart.getItemCount(); i++) {
             CartItem item = cart.getItem(i);
             double   lineTotal = item.product->getPrice() * item.quantity;
@@ -307,27 +234,22 @@ public:
                 << item.product->getName() << "\t\t"
                 << item.quantity << "\t"
                 << CURRENCY_SYMBOL << item.product->getPrice() << "\t"
-                << CURRENCY_SYMBOL << lineTotal << "\n";
+                << CURRENCY_SYMBOL << lineTotal << endl;
         }
-        fout << RECEIPT_DIVIDER << "\n";
-        fout << "Subtotal        : " << CURRENCY_SYMBOL << bill.getSubtotal() << "\n";
-        fout << "Tax             : " << CURRENCY_SYMBOL << bill.getTotalTax() << "\n";
-        fout << "Item Discounts  : " << CURRENCY_SYMBOL << bill.getTotalDiscount() << "\n";
+        fout << RECEIPT_DIVIDER << endl;
+        fout << "Subtotal        : " << CURRENCY_SYMBOL << bill.getSubtotal() << endl;
+        fout << "Tax             : " << CURRENCY_SYMBOL << bill.getTotalTax() << endl;
+        fout << "Item Discounts  : " << CURRENCY_SYMBOL << bill.getTotalDiscount() << endl;
         if (bill.isCouponApplied()) {
             fout << "Coupon (" << bill.getCouponCode() << ")   : -"
-                << CURRENCY_SYMBOL << bill.getCouponDiscount() << "\n";
+                << CURRENCY_SYMBOL << bill.getCouponDiscount() << endl;
         }
-        fout << RECEIPT_DIVIDER << "\n";
-        fout << "GRAND TOTAL     : " << CURRENCY_SYMBOL << bill.getGrandTotal() << "\n";
-        fout << RECEIPT_FOOTER << "\n";
+        fout << RECEIPT_DIVIDER << endl;
+        fout << "GRAND TOTAL     : " << CURRENCY_SYMBOL << bill.getGrandTotal() << endl;
+        fout << RECEIPT_FOOTER << endl;
         fout.close();
         cout << "[FileManager] Receipt saved: " << path << endl;
     }
-
-
-    // ============================================================
-    //  SECTION 6 — REFUND LOG  (data/refunds.txt)
-    // ============================================================
 
     static void appendRefundLog(const string& originalReceiptID,
         const string& customerName,
@@ -340,23 +262,16 @@ public:
             cout << "[FileManager] Error: Cannot write to " << FILE_REFUNDS_LOG << endl;
             return;
         }
-        fout << RECEIPT_DIVIDER << "\n";
-        fout << "Original Receipt : " << originalReceiptID << "\n";
-        fout << "Customer         : " << customerName << "\n";
-        fout << "Timestamp        : " << timestamp << "\n";
-        fout << "Restocking Fee   : " << CURRENCY_SYMBOL << restockingFee << "\n";
-        fout << "Refund Amount    : " << CURRENCY_SYMBOL << refundAmount << "\n";
+        fout << RECEIPT_DIVIDER << endl;
+        fout << "Original Receipt : " << originalReceiptID << endl;
+        fout << "Customer         : " << customerName << endl;
+        fout << "Timestamp        : " << timestamp << endl;
+        fout << "Restocking Fee   : " << CURRENCY_SYMBOL << restockingFee << endl;
+        fout << "Refund Amount    : " << CURRENCY_SYMBOL << refundAmount << endl;
         fout << RECEIPT_DIVIDER << "\n\n";
         fout.close();
         cout << "[FileManager] Refund logged for receipt: " << originalReceiptID << endl;
     }
-
-
-    // ============================================================
-    //  SECTION 7 — SALES REPORT  (data/reports/RPT-XXXX.txt)
-    //  Reads sales_log.txt and writes a summary.
-    // ============================================================
-
     static void generateSalesReport(const string& reportID, const string& timestamp) {
         ifstream fin(FILE_SALES_LOG);
         if (!fin.is_open()) {
@@ -386,40 +301,28 @@ public:
                 << "\n  Make sure the data/reports/ folder exists." << endl;
             return;
         }
-        fout << REPORT_HEADER << "\n";
-        fout << "Report ID          : " << reportID << "\n";
-        fout << "Generated On       : " << timestamp << "\n";
-        fout << REPORT_DIVIDER << "\n";
-        fout << "Total Transactions : " << transactions << "\n";
-        fout << "Total Revenue      : " << CURRENCY_SYMBOL << totalRevenue << "\n";
-        fout << REPORT_DIVIDER << "\n";
+        fout << REPORT_HEADER << endl;
+        fout << "Report ID          : " << reportID << endl;
+        fout << "Generated On       : " << timestamp << endl;
+        fout << REPORT_DIVIDER << endl;
+        fout << "Total Transactions : " << transactions << endl;
+        fout << "Total Revenue      : " << CURRENCY_SYMBOL << totalRevenue << endl;
+        fout << REPORT_DIVIDER << endl;
         fout << "(See sales_log.txt for full per-transaction detail)\n";
         fout.close();
         cout << "[FileManager] Report saved: " << path << endl;
     }
-
-
-    // ============================================================
-    //  SECTION 8 — UTILITY HELPERS
-    // ============================================================
-
-    // Generate receipt ID like "RCP-0042"
     static string generateReceiptID(int counter) {
         string n = to_string(counter);
         while (n.length() < 4) n = "0" + n;
         return RECEIPT_ID_PREFIX + n;
     }
-
     // Generate report ID like "RPT-0001"
     static string generateReportID(int counter) {
         string n = to_string(counter);
         while (n.length() < 4) n = "0" + n;
         return REPORT_ID_PREFIX + n;
     }
-
-    // ✅ FIX: Creates required data folders if they don't exist.
-    // Cross-platform — Windows aur Linux/Mac dono pe kaam karta hai.
-    // Call once at program startup (main.cpp mein QDir::setCurrent ke baad).
     static void initDataFolders() {
 #ifdef _WIN32
         // Windows
@@ -433,7 +336,6 @@ public:
 #endif
         cout << "[FileManager] Data folders ready." << endl;
     }
-
     // Counts existing receipts in sales log to generate non-duplicate receipt IDs
     static int getNextReceiptCounter() {
         ifstream fin(FILE_SALES_LOG);
@@ -448,4 +350,4 @@ public:
         return count + 1;
     }
 };
-#endif // FILEMANAGER_H
+#endif
